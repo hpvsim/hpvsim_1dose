@@ -107,7 +107,7 @@ def run_parsets(
     msim = hpv.MultiSim(simlist)
     msim.reduce()
     if save_results:
-        sc.saveobj(f'results/msims/{dflocation}.obj', msim.results)
+        sc.saveobj(f'results/msims/{dflocation}.mres', msim.results)
 
     return msim
 
@@ -116,7 +116,7 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    for location in ['bangladesh']:  # loc.locations:
+    for location in loc.locations[1:]:
         # sim = run_sim(location=location)
         msim = run_parsets(location=location)
 
