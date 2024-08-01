@@ -137,7 +137,7 @@ if __name__ == '__main__':
                         intv_label = intv.label
                         mres[intv_label] = reduced_sim['interventions'][ii].n_products_used
                         if scen_label == 'Double dose':
-                            mres[intv_label] = reduced_sim['interventions'][ii].n_products_used * 2
+                            mres[intv_label] = reduced_sim['interventions'][ii].n_products_used[:] * 2
 
                     msim_dict[scen_label] = mres
 
