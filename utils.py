@@ -180,9 +180,6 @@ def shrink_calib(calib, n_results=100):
     cal = sc.objdict()
     plot_indices = calib.df.iloc[0:n_results, 0].values
     cal.analyzer_results = [calib.analyzer_results[i] for i in plot_indices]
-    cal.sim_results = sc.objdict()
-    for skey in calib.extra_sim_result_keys:
-        cal.sim_results[skey] =
     cal.target_data = calib.target_data
     cal.df = calib.df.iloc[0:n_results, ]
     return cal
