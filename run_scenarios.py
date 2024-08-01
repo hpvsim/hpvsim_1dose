@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in [loc.locations[0]]:
+        for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{location}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
