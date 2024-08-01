@@ -141,6 +141,6 @@ if __name__ == '__main__':
 
                     msim_dict[scen_label] = mres
 
-                sc.saveobj(f'results/vx_scens.obj', msim_dict)
+                sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
 
     print('Done.')
