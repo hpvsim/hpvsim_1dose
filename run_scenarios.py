@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if do_run:
         for location in loc.locations:
             fnlocation = location.replace(' ', '_')
-            calib_pars = sc.loadobj(f'results/{location}_pars.obj')
+            calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
             msim = run_sims(location=location, vx_scenarios=vx_scenarios, end=end)
 
