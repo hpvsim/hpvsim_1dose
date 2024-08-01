@@ -23,12 +23,12 @@ import locations as loc
 
 # CONFIGURATIONS TO BE SET BY USERS BEFORE RUNNING
 to_run = [
-    'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
-    # 'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
+    # 'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
+    'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
 ]
 debug = False  # If True, this will do smaller runs that can be run locally for debugging
 do_save = True
-locations = [loc.locations[7]]
+locations = loc.locations
 
 # Run settings for calibration (dependent on debug)
 n_trials = [1000, 1][debug]  # How many trials to run for calibration
@@ -86,7 +86,7 @@ def run_calib(location=None, n_trials=None, n_workers=None,
     if do_plot:
         calib.plot(do_save=True, fig_path=f'figures/{filename}.png')
     if do_save:
-        sc.saveobj(f'results/{filename}.obj', calib)
+        sc.saveobj(f'raw_results/{filename}.obj', calib)
 
     print(f'Best pars are {calib.best_pars}')
 
@@ -96,10 +96,10 @@ def run_calib(location=None, n_trials=None, n_workers=None,
 ########################################################################
 # Load pre-run calibration
 ########################################################################
-def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, filestem=''):
+def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, save_mini=True, filestem=''):
     fnlocation = location.replace(' ', '_')
     filename = f'{fnlocation}_calib{filestem}'
-    calib = sc.load(f'results/{filename}.obj')
+    calib = sc.load(f'raw_results/{filename}.obj')
     if do_plot:
         sc.fonts(add=sc.thisdir(aspath=True) / 'Libertinus Sans')
         sc.options(font='Libertinus Sans')
@@ -116,6 +116,10 @@ def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, filest
         sc.save(f'results/{location}_pars{filestem}.obj', calib_pars)
         sc.save(f'results/{location}_pars{filestem}_all.obj', trial_pars)
 
+    if save_mini:
+        cal = ut.shrink_calib(calib, n_results=100)
+        sc.saveobj(f'results/{location}_calib{filestem}_reduced.obj', cal)
+
     return calib
 
 
@@ -123,7 +127,7 @@ def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, filest
 if __name__ == '__main__':
 
     T = sc.timer()
-    filestem = '_aug01'
+    filestem = ''
 
     # Run calibration
     if 'run_calibration' in to_run:

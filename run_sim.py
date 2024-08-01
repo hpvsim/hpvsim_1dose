@@ -96,12 +96,29 @@ def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
     return sim
 
 
+def run_parsets(
+        location=None, debug=False, verbose=.1, interventions=None, save_results=True, **kwargs):
+    ''' Run multiple simulations in parallel '''
+
+    dflocation = location.replace(' ', '_')
+    parsets = sc.loadobj(f'results/{dflocation}_pars_all.obj')
+    kwargs = sc.mergedicts(dict(location=location, debug=debug, verbose=verbose, interventions=interventions), kwargs)
+    simlist = sc.parallelize(run_sim, iterkwargs=dict(calib_pars=parsets), kwargs=kwargs, serial=debug, die=True)
+    msim = hpv.MultiSim(simlist)
+    msim.reduce()
+    if save_results:
+        sc.saveobj(f'results/msims/{dflocation}.obj', msim.results)
+
+    return msim
+
+
 # %% Run as a script
 if __name__ == '__main__':
     T = sc.timer()
 
     for location in ['bangladesh']:  # loc.locations:
-        sim = run_sim(location=location)
+        # sim = run_sim(location=location)
+        msim = run_parsets(location=location)
 
     T.toc('Done')
 
