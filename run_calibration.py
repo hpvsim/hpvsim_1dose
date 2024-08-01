@@ -28,7 +28,7 @@ to_run = [
 ]
 debug = False  # If True, this will do smaller runs that can be run locally for debugging
 do_save = True
-locations = [loc.locations[0]]
+locations = [loc.locations[7]]
 
 # Run settings for calibration (dependent on debug)
 n_trials = [1000, 1][debug]  # How many trials to run for calibration
