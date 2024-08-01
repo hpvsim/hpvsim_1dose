@@ -53,7 +53,7 @@ def make_priors():
 def run_calib(location=None, n_trials=None, n_workers=None,
               do_plot=False, do_save=True, filestem=''):
 
-    sim = rs.make_sim(location)
+    sim = rs.make_sim(location, calib=True)
     datafiles = ut.make_datafiles([location])[location]
 
     # Define the calibration parameters
