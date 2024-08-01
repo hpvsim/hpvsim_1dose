@@ -19,6 +19,7 @@ import hpvsim as hpv
 # Imports from this repository
 import pars_data as dp
 import utils as ut
+import locations as loc
 
 # %% Settings and filepaths
 # Debug switch
