@@ -76,7 +76,7 @@ def make_vx_scenarios(start_year=2025, product='bivalent', end=2100):
     return vx_scenarios
 
 
-def make_sims(calib_pars=None, vx_scenarios=None, end=2100):
+def make_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100):
     """ Set up scenarios """
 
     st_intv = []  # make_st()
@@ -86,7 +86,7 @@ def make_sims(calib_pars=None, vx_scenarios=None, end=2100):
         sims = sc.autolist()
         for seed in range(n_seeds):
             interventions = vx_intv + st_intv
-            sim = rs.make_sim(calib_pars=calib_pars, debug=debug, interventions=interventions, end=end, seed=seed)
+            sim = rs.make_sim(location=location, calib_pars=calib_pars, debug=debug, interventions=interventions, end=end, seed=seed)
             sim.label = name
             sims += sim
         all_msims += hpv.MultiSim(sims)
@@ -96,9 +96,9 @@ def make_sims(calib_pars=None, vx_scenarios=None, end=2100):
     return msim
 
 
-def run_sims(calib_pars=None, vx_scenarios=None, end=2100, verbose=0.2):
+def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbose=0.2):
     """ Run the simulations """
-    msim = make_sims(calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
+    msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
     msim.run(verbose=verbose)
     return msim
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{location}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
-            msim = run_sims(vx_scenarios=vx_scenarios, end=end)
+            msim = run_sims(location=location, vx_scenarios=vx_scenarios, end=end)
 
             if do_process:
 
