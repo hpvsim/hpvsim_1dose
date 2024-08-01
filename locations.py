@@ -23,3 +23,20 @@ locations = [
 nosbdata_locations = ["cote d'ivoire", "cote divoire"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
+
+vx_intro = {
+    'bangladesh': 2023,
+    'burkina faso': 2022,
+    'cameroon': 2020,
+    'cote divoire': 2019,
+    'ethiopia': 2018,
+    'malawi': 2019,
+    'mozambique': 2021,
+    'myanmar': 2020,
+    'nigeria': 2023,
+    'sierra leone': 2022,
+    'tanzania': 2018,
+    'togo': 2023,
+    'uganda': 2015,
+    'zambia': 2019,
+}
