@@ -16,7 +16,7 @@ import utils as ut
 
 
 #%% Plotting functions
-def plot_fig1(locations, filestem='', n_results=50):
+def plot_figS1(locations, filestem='', n_results=50):
 
     ut.set_font(12)
     n_plots = len(locations)
@@ -74,13 +74,13 @@ def plot_fig1(locations, filestem='', n_results=50):
         plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/fig1.png", dpi=100)
+    pl.savefig(f"figures/figS1.png", dpi=100)
 
 
 #%% Run as a script
 if __name__ == '__main__':
 
     locations = loc.locations
-    plot_fig1(locations)
+    plot_figS1(locations)
 
     print('Done.')

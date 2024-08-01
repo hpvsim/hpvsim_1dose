@@ -18,7 +18,7 @@ import utils as ut
 
 
 #%% Plotting functions
-def plot_fig2(locations, filestem='', n_results=50):
+def plot_figS2(locations):
 
     ut.set_font(14)
     colors = sc.gridcolors(2)
@@ -54,13 +54,13 @@ def plot_fig2(locations, filestem='', n_results=50):
         plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/fig2.png", dpi=100)
+    pl.savefig(f"figures/figS2.png", dpi=100)
 
 
 
 # %% Run as a script
 if __name__ == '__main__':
 
-    plot_fig2(loc.locations)
+    plot_figS2(loc.locations)
 
     print('Done.') 
