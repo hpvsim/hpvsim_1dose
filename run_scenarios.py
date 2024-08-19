@@ -108,12 +108,12 @@ if __name__ == '__main__':
 
     T = sc.timer()
     do_run = True
-    do_process = False
+    do_process = True
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in ['bangladesh']:  # loc.locations:
+        for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
