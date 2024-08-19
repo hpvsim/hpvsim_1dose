@@ -42,13 +42,13 @@ def plot_fig1(locations):
     n_plots = len(locations)
     fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(25, 12))
     axes = axes.flatten()
-    resname = 'doses'
+    resname = 'n_vaccinated'
 
     colors = sc.gridcolors(3)
 
     # What to plot
     start_year = 2016
-    end_year = 2100
+    end_year = 2050
 
     for pn, location in enumerate(locations):
         dflocation = location.replace(' ', '_')

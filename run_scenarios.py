@@ -55,6 +55,7 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Routine vx'
     )
     vx_scenarios['Single dose'] = [routine_vx1]
@@ -68,6 +69,7 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Routine vx'
     )
 
@@ -108,7 +110,7 @@ if __name__ == '__main__':
 
     T = sc.timer()
     do_run = True
-    do_process = True
+    do_process = False
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
@@ -117,7 +119,11 @@ if __name__ == '__main__':
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
-            msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
+            # msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
+            msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
+            for sim in msim.sims[1:]:
+                sim.run(verbose=0.1)
+
 
             if do_process:
 
