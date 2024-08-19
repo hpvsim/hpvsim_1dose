@@ -11,17 +11,11 @@ import numpy as np
 
 
 def plot_single(ax, mres, to_plot, si, ei, color, label=None, smooth=True):
-    years = mres.year[si:ei]
-    ts = 0.5  # detection rate / sensitivity
 
-    if to_plot == 'precin_incidence':
-        best = mres.n_precin_by_age[3:10, si:ei].sum(axis=0) / mres.n_females_alive_by_age[3:10, si:ei].sum(axis=0) * ts
-        low = mres.n_precin_by_age.low[3:10, si:ei].sum(axis=0) / mres.n_females_alive_by_age.low[3:10, si:ei].sum(axis=0) * ts
-        high = mres.n_precin_by_age.high[3:10, si:ei].sum(axis=0) / mres.n_females_alive_by_age.high[3:10, si:ei].sum(axis=0) * ts
-    else:
-        best = mres[to_plot][si:ei]
-        low = mres[to_plot].low[si:ei]
-        high = mres[to_plot].high[si:ei]
+    years = mres.year[si:ei]
+    best = mres[to_plot][si:ei]
+    low = mres[to_plot].low[si:ei]
+    high = mres[to_plot].high[si:ei]
 
     if smooth:
         best = np.convolve(list(best), np.ones(5), "valid")/5
@@ -34,13 +28,21 @@ def plot_single(ax, mres, to_plot, si, ei, color, label=None, smooth=True):
     return ax
 
 
+def plot_doses(ax, mres, si, ei, color, label=None):
+
+    years = mres.year[si:ei]
+    doses = mres['Routine vx'][si:ei]
+    ax.plot(years, doses, color=color, label=label)
+    return ax
+
+
 def plot_fig1(locations):
 
-    ut.set_font(16)
+    ut.set_font(22)
     n_plots = len(locations)
     fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(25, 12))
     axes = axes.flatten()
-    resname = 'asr_cancer_incidence'
+    resname = 'doses'
 
     colors = sc.gridcolors(3)
 
@@ -58,13 +60,17 @@ def plot_fig1(locations):
 
         cn = 0
         for slabel, mres in msim_dict.items():
-            ax = plot_single(ax, mres, resname, si, ei, color=colors[cn], label=slabel)
+            if resname == 'doses':
+                if slabel != 'Baseline':
+                    ax = plot_doses(ax, mres, si, ei, color=colors[cn], label=slabel)
+            else:
+                ax = plot_single(ax, mres, resname, si, ei, color=colors[cn], label=slabel)
             cn += 1
 
         ax.set_ylim(bottom=0)  #, top=23)
-        ax.set_ylabel(resname)
+        # ax.set_ylabel(resname)
         ax.set_title(location.title())
-        if pn == 0: ax.legend(frameon=False)
+        if pn == 0: ax.legend(loc="lower left")
         if resname == 'asr_cancer_incidence': ax.axhline(y=4, color='k', ls='--')
 
     fig.tight_layout()

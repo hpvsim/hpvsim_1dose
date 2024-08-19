@@ -31,7 +31,7 @@ n_seeds = [20, 1][debug]  # How many seeds to run per cluster
 # %% Create interventions
 
 
-def make_vx_scenarios(start_year=2025, product='bivalent', end=2100):
+def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
 
     age_range = (9, 14)
     routine_age = (age_range[0], age_range[0]+1)
@@ -43,7 +43,7 @@ def make_vx_scenarios(start_year=2025, product='bivalent', end=2100):
 
     # Single dose
     singledose = hpv.default_vx(prod_name=product)
-    singledose.imm_init = dict(dist='beta_mean', par1=0.95, par2=0.025)
+    singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
     years = np.arange(start_year, end+1, 1)
@@ -108,13 +108,12 @@ if __name__ == '__main__':
 
     T = sc.timer()
     do_run = True
-    do_save = False
-    do_process = True
+    do_process = False
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in loc.locations:
+        for location in ['bangladesh']:  # loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
@@ -122,7 +121,7 @@ if __name__ == '__main__':
 
             if do_process:
 
-                metrics = ['year', 'asr_cancer_incidence', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
+                metrics = ['year', 'asr_cancer_incidence', 'n_vaccinated', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
 
                 # Process results
                 scen_labels = list(['Baseline', 'Single dose', 'Double dose'])

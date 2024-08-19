@@ -57,7 +57,6 @@ def plot_figS2(locations):
     pl.savefig(f"figures/figS2.png", dpi=100)
 
 
-
 # %% Run as a script
 if __name__ == '__main__':
 
