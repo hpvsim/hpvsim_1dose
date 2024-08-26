@@ -55,7 +55,7 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
-        interpolate=False,
+        # interpolate=False,
         label='Routine vx'
     )
     vx_scenarios['Single dose'] = [routine_vx1]
@@ -69,7 +69,7 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
-        interpolate=False,
+        # interpolate=False,
         label='Routine vx'
     )
 
