@@ -46,34 +46,39 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    # years = np.arange(start_year, end+1, 1)
-    # n_years = len(years)
-    # d1_coverage = np.concatenate([np.linspace(0.1, 0.9, 5), np.repeat(0.9, n_years-5)])
-    routine_vx1 = hpv.campaign_vx(
+    single_vx = hpv.campaign_vx(
         prob=[0.463, 0.784],
         years=[2023, 2024],
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
-        # interpolate=False,
-        label='Routine vx'
+        label='Single dose'
     )
-    vx_scenarios['Single dose'] = [routine_vx1]
+    vx_scenarios['Single dose'] = [single_vx]
 
     doubledose = hpv.default_vx(prod_name=product)
     doubledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
-    # d2_coverage = np.concatenate([np.linspace(0.1, 0.9, 9), np.repeat(0.9, n_years-9)])
-    routine_vx2 = hpv.campaign_vx(
+    double_vx = hpv.campaign_vx(
         prob=[0.463/2, 0.784/2],
         years=[2023, 2024],
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
-        # interpolate=False,
-        label='Routine vx'
+        label='Double dose'
     )
 
-    vx_scenarios['Double dose'] = [routine_vx2]
+    # 908e3/(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
+    # 1573600 /(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
+    nomac_vx = hpv.campaign_vx(
+        prob=[0.12, 0.20],
+        years=[2023, 2024],
+        product=doubledose,
+        age_range=routine_age,
+        eligibility=eligibility,
+        label='No MAC'
+    )
+
+    vx_scenarios['No MAC'] = [nomac_vx]
 
     return vx_scenarios
 
