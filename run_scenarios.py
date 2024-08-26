@@ -67,6 +67,8 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
         label='Double dose'
     )
 
+    vx_scenarios['Double dose'] = [double_vx]
+
     # 908e3/(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
     # 1573600 /(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
     nomac_vx = hpv.campaign_vx(
@@ -134,7 +136,7 @@ if __name__ == '__main__':
                 metrics = ['year', 'asr_cancer_incidence', 'n_vaccinated', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
 
                 # Process results
-                scen_labels = list(['Baseline', 'Single dose', 'Double dose'])
+                scen_labels = list(['Baseline', 'Single dose', 'Double dose', 'No MAC'])
                 mlist = msim.split(chunks=len(scen_labels))
 
                 msim_dict = sc.objdict()
