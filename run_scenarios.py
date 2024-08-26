@@ -72,7 +72,7 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
     # 908e3/(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
     # 1573600 /(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
     nomac_vx = hpv.campaign_vx(
-        prob=[0.12, 0.20],
+        prob=[0.12/2, 0.20/2],
         years=[2023, 2024],
         product=doubledose,
         age_range=routine_age,
