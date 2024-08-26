@@ -20,6 +20,7 @@ import hpvsim as hpv
 import pars_data as dp
 import utils as ut
 import locations as loc
+import analyzers as an
 
 # %% Settings and filepaths
 # Debug switch
@@ -62,18 +63,18 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib_pars is not None:
         pars = sc.mergedicts(pars, calib_pars)
 
-    sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
+    sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=an.cohort_cancers(), datafile=datafile, rand_seed=seed)
 
     return sim
 
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
-        do_save=True, calib_par_stem=None, calib_pars=None, end=2020):
+        do_save=True, calib_pars=None, end=2020):
 
     dflocation = location.replace(' ', '_')
-    if calib_pars is None and calib_par_stem is not None:
-        calib_pars = sc.loadobj(f'results/{dflocation + calib_par_stem}.obj')
+    if calib_pars is None:
+        calib_pars = sc.loadobj(f'results/{dflocation}_pars.obj')
 
     # Make sim
     sim = make_sim(
@@ -118,8 +119,8 @@ if __name__ == '__main__':
     T = sc.timer()
 
     for location in ['bangladesh']:  #loc.locations:
-        sim = make_sim(location=location, end=2025)
-        # sim = run_sim(location=location)
+        # sim = make_sim(location=location, end=2025)
+        sim = run_sim(location=location, end=2100)
         # msim = run_parsets(location=location)
 
     T.toc('Done')
