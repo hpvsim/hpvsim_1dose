@@ -117,9 +117,10 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    for location in loc.locations:
+    for location in ['bangladesh']:  #loc.locations:
+        sim = make_sim(location=location, end=2025)
         # sim = run_sim(location=location)
-        msim = run_parsets(location=location)
+        # msim = run_parsets(location=location)
 
     T.toc('Done')
 

@@ -46,12 +46,12 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    years = np.arange(start_year, end+1, 1)
-    n_years = len(years)
-    d1_coverage = np.concatenate([np.linspace(0.1, 0.9, 5), np.repeat(0.9, n_years-5)])
-    routine_vx1 = hpv.routine_vx(
-        prob=d1_coverage,
-        years=years,
+    # years = np.arange(start_year, end+1, 1)
+    # n_years = len(years)
+    # d1_coverage = np.concatenate([np.linspace(0.1, 0.9, 5), np.repeat(0.9, n_years-5)])
+    routine_vx1 = hpv.campaign_vx(
+        prob=[0.463, 0.784],
+        years=[2023, 2024],
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
@@ -62,10 +62,10 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
 
     doubledose = hpv.default_vx(prod_name=product)
     doubledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
-    d2_coverage = np.concatenate([np.linspace(0.1, 0.9, 9), np.repeat(0.9, n_years-9)])
-    routine_vx2 = hpv.routine_vx(
-        prob=d2_coverage,
-        years=years,
+    # d2_coverage = np.concatenate([np.linspace(0.1, 0.9, 9), np.repeat(0.9, n_years-9)])
+    routine_vx2 = hpv.campaign_vx(
+        prob=[0.463/2, 0.784/2],
+        years=[2023, 2024],
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
@@ -115,15 +115,14 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in loc.locations:
+        for location in ['bangladesh']:  #loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
-            # msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
-            msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
-            for sim in msim.sims[1:]:
-                sim.run(verbose=0.1)
-
+            msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
+            # msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
+            # for sim in msim.sims[1:]:
+            #     sim.run(verbose=0.1)
 
             if do_process:
 
