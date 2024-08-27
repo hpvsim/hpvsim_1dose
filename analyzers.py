@@ -70,4 +70,3 @@ class cohort_cancers(hpv.Analyzer):
         reduced_analyzer.results.high = np.quantile(raw, q=quantiles['high'], axis=-1)
 
         return reduced_analyzer
-        
