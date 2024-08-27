@@ -31,10 +31,10 @@ n_seeds = [20, 1][debug]  # How many seeds to run per cluster
 # %% Create interventions
 
 
-def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
+def make_vx_scenarios(location=None, product='bivalent', year=2023):
 
-    age_range = (9, 14)
-    routine_age = (age_range[0], age_range[0]+1)
+    routine_age = (9, 15)
+    mac_age = (15, 17)
 
     vx_scenarios = dict()
 
@@ -46,41 +46,48 @@ def make_vx_scenarios(start_year=2023, product='bivalent', end=2100):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    single_vx = hpv.campaign_vx(
-        prob=[0.463, 0.784],
-        years=[2023, 2024],
+    sq_routine_coverage = loc.vx_coverage[location][0]
+    sq_mac_coverage = loc.vx_coverage[location][1]
+    cf_routine_coverage = loc.vx_cf[location][0]
+    cf_mac_coverage = loc.vx_cf[location][1]
+
+    routine_single_vx = hpv.campaign_vx(
+        prob=sq_routine_coverage,
+        year=year,
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
-        label='Single dose'
+        label='Single dose routine'
     )
-    vx_scenarios['Single dose'] = [single_vx]
+    mac_single_vx = hpv.campaign_vx(
+        prob=sq_mac_coverage,
+        year=year,
+        product=singledose,
+        age_range=mac_age,
+        eligibility=eligibility,
+        label='Single dose MAC'
+    )
+    vx_scenarios['Single dose'] = [routine_single_vx, mac_single_vx]
 
     doubledose = hpv.default_vx(prod_name=product)
     doubledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
-    double_vx = hpv.campaign_vx(
-        prob=[0.463/2, 0.784/2],
-        years=[2023, 2024],
+    routine_single_vx = hpv.campaign_vx(
+        prob=cf_routine_coverage,
+        year=year,
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
-        label='Double dose'
+        label='Double dose routine'
     )
-
-    vx_scenarios['Double dose'] = [double_vx]
-
-    # 908e3/(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
-    # 1573600 /(np.count_nonzero((sim.people.is_female) & (sim.people.age>10) & (sim.people.age<=14))*sim.pars['pop_scale'])
-    nomac_vx = hpv.campaign_vx(
-        prob=[0.12/2, 0.20/2],
-        years=[2023, 2024],
+    mac_single_vx = hpv.campaign_vx(
+        prob=cf_mac_coverage,
+        year=year,
         product=doubledose,
-        age_range=routine_age,
+        age_range=mac_age,
         eligibility=eligibility,
-        label='No MAC'
+        label='Double dose MAC'
     )
-
-    vx_scenarios['No MAC'] = [nomac_vx]
+    vx_scenarios['Double dose'] = [routine_single_vx, mac_single_vx]
 
     return vx_scenarios
 
@@ -122,10 +129,10 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in ['bangladesh']:  #loc.locations:
+        for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
-            vx_scenarios = make_vx_scenarios(start_year=loc.vx_intro[location], end=end)
+            vx_scenarios = make_vx_scenarios(location=location, year=2023)
             msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
             # msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
             # for sim in msim.sims[1:]:
@@ -136,7 +143,7 @@ if __name__ == '__main__':
                 metrics = ['year', 'asr_cancer_incidence', 'n_vaccinated', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
 
                 # Process results
-                scen_labels = list(['Baseline', 'Single dose', 'Double dose', 'No MAC'])
+                scen_labels = list(['Baseline', 'Single dose', 'Double dose'])
                 mlist = msim.split(chunks=len(scen_labels))
 
                 msim_dict = sc.objdict()
