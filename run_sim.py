@@ -113,16 +113,19 @@ def run_popsims(end=2024, verbose=0.1):
     """ Run the simulations """
     msim = make_popsims(end=end)
     msim.run(verbose=verbose, keep_people=True)
-    sc.saveobj('results/popsims.obj', msim)
-    dd = dict()
+    # sc.saveobj('results/popsims.obj', msim)
+    dfs = []
     for sim in msim.sims:
+        dd = dict()
         location = sim.pars['location']
         dd['location'] = location
         ppl = sim.people
         ps = sim.pars['pop_scale']
         for age in range(9, 16):
             dd[age] = np.count_nonzero(ppl.is_female & (ppl.age>age) & (ppl.age<=(age+1)) & ppl.alive)*ps
-    sc.saveobj('results/popsims_dict.obj', dd)
+        dfs += [pd.DataFrame(dd, index=[2020])]
+    ddf = pd.concat(dfs)
+    sc.saveobj('results/simpops.df', ddf)
     return msim
 
 
