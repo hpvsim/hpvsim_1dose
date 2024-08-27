@@ -167,8 +167,8 @@ if __name__ == '__main__':
                     reduced_sim = mlist[si].reduce(output=True)
                     mres = sc.objdict({metric: reduced_sim.results[metric] for metric in metrics})
                     mres['cohort_cancers'] = reduced_analyzer.cum_cancers_best
-                    mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_best
-                    mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_best
+                    mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_low
+                    mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_high
 
                     for ii, intv in enumerate(reduced_sim['interventions']):
                         intv_label = intv.label
@@ -193,5 +193,6 @@ if __name__ == '__main__':
                 dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
             dfs += [pd.DataFrame(dd, index=[0])]
         ddf = pd.concat(dfs)
+        ddf.to_csv('results.csv')
 
     print('Done.')
