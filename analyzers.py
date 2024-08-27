@@ -13,7 +13,7 @@ class cohort_cancers(hpv.Analyzer):
     def __init__(self, cohort_age=None, start=None, **kwargs):
         super().__init__(**kwargs)
         self.start = start or 2023
-        self.cohort_age = cohort_age or [9, 14]
+        self.cohort_age = cohort_age or [9, 16]
         self.years = None
 
         return
@@ -68,5 +68,11 @@ class cohort_cancers(hpv.Analyzer):
         reduced_analyzer.results = np.quantile(raw, q=0.5, axis=-1)
         reduced_analyzer.low  = np.quantile(raw, q=quantiles['low'], axis=-1)
         reduced_analyzer.high = np.quantile(raw, q=quantiles['high'], axis=-1)
+
+        # Do sums
+        sums = raw.sum(axis=0)
+        reduced_analyzer.cum_cancers_best = np.quantile(sums, q=0.5)
+        reduced_analyzer.cum_cancers_low  = np.quantile(sums, q=quantiles['low'])
+        reduced_analyzer.cum_cancers_high = np.quantile(sums, q=quantiles['high'])
 
         return reduced_analyzer

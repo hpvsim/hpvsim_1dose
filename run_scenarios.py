@@ -137,6 +137,7 @@ if __name__ == '__main__':
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
+            # vx_scenarios = {'Baseline': []}
             msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
             # msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
             # for sim in msim.sims:
@@ -147,15 +148,14 @@ if __name__ == '__main__':
                 metrics = ['year', 'asr_cancer_incidence', 'n_vaccinated', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
 
                 # Process results
-                scen_labels = list(['Baseline', 'Single dose', 'Double dose'])
+                scen_labels = list(vx_scenarios.keys())
                 mlist = msim.split(chunks=len(scen_labels))
 
                 msim_dict = sc.objdict()
                 for si, scen_label in enumerate(scen_labels):
                     reduced_sim = mlist[si].reduce(output=True)
                     mres = sc.objdict({metric: reduced_sim.results[metric] for metric in metrics})
-                    mres['cohort_cancers'] = reduced_sim.get_analyzer().results
-                    mres['cohort_cancer_years'] = reduced_sim.get_analyzer().years
+                    mres['cohort_cancers'] = reduced_sim.get_analyzer().cum_cancers_best
 
                     for ii, intv in enumerate(reduced_sim['interventions']):
                         intv_label = intv.label
