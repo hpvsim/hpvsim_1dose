@@ -25,7 +25,7 @@ import locations as loc
 
 # Settings - used here and imported elsewhere
 debug = 0
-n_seeds = [20, 1][debug]  # How many seeds to run per cluster
+n_seeds = [1, 1][debug]  # How many seeds to run per cluster
 
 
 # %% Create interventions
@@ -53,18 +53,20 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
 
     routine_single_vx = hpv.campaign_vx(
         prob=sq_routine_coverage,
-        year=year,
+        years=year,
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Single dose routine'
     )
     mac_single_vx = hpv.campaign_vx(
         prob=sq_mac_coverage,
-        year=year,
+        years=year,
         product=singledose,
         age_range=mac_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Single dose MAC'
     )
     vx_scenarios['Single dose'] = [routine_single_vx, mac_single_vx]
@@ -73,18 +75,20 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
     doubledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     routine_single_vx = hpv.campaign_vx(
         prob=cf_routine_coverage,
-        year=year,
+        years=year,
         product=doubledose,
         age_range=routine_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Double dose routine'
     )
     mac_single_vx = hpv.campaign_vx(
         prob=cf_mac_coverage,
-        year=year,
+        years=year,
         product=doubledose,
         age_range=mac_age,
         eligibility=eligibility,
+        interpolate=False,
         label='Double dose MAC'
     )
     vx_scenarios['Double dose'] = [routine_single_vx, mac_single_vx]
@@ -129,14 +133,14 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in loc.locations:
+        for location in ['bangladesh']:  #loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
-            msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
-            # msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
-            # for sim in msim.sims[1:]:
-            #     sim.run(verbose=0.1)
+            # msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
+            msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
+            for sim in msim.sims[1:]:
+                sim.run(verbose=0.1)
 
             if do_process:
 
