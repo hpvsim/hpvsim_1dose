@@ -133,15 +133,17 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in ['bangladesh']:  #loc.locations:
+        for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
-            # vx_scenarios = {'Baseline': []}
             msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
-            # msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
-            # for sim in msim.sims:
-            #     sim.run(verbose=0.1)
+
+            if debug:
+                vx_scenarios = {'Baseline': []}
+                msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
+                for sim in msim.sims:
+                    sim.run(verbose=0.1)
 
             if do_process:
 
