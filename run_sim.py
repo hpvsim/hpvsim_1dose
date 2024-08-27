@@ -98,6 +98,24 @@ def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
     return sim
 
 
+def make_popsims(end=2024):
+    """ Set up scenarios """
+    sims = sc.autolist()
+    for location in loc.locations:
+        sim = make_sim(location=location, end=end)
+        sims += sim
+    msim = hpv.MultiSim(sims)
+    return msim
+
+
+def run_popsims(end=2024, verbose=0.1):
+    """ Run the simulations """
+    msim = make_popsims(end=end)
+    msim.run(verbose=verbose)
+    msim.save(f'results/popsims.obj')
+    return msim
+
+
 def run_parsets(
         location=None, debug=False, verbose=.1, interventions=None, save_results=True, **kwargs):
     ''' Run multiple simulations in parallel '''
@@ -118,9 +136,11 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    for location in ['bangladesh']:  #loc.locations:
+    run_popsims(end=2024, verbose=0.1)
+
+    # for location in ['bangladesh']:  #loc.locations:
         # sim = make_sim(location=location, end=2025)
-        sim = run_sim(location=location, end=2100)
+        # sim = run_sim(location=location, end=2100)
         # msim = run_parsets(location=location)
 
     T.toc('Done')
