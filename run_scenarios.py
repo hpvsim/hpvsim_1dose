@@ -153,9 +153,16 @@ if __name__ == '__main__':
 
                 msim_dict = sc.objdict()
                 for si, scen_label in enumerate(scen_labels):
+
+                    # Deal with analyzer
+                    msim = mlist[si]
+                    base_analyzer = msim.sims[0].get_analyzer('cohort_cancers')
+                    alist = [sim.get_analyzer('cohort_cancers') for sim in msim.sims]
+                    reduced_analyzer = base_analyzer.reduce(alist)
+
                     reduced_sim = mlist[si].reduce(output=True)
                     mres = sc.objdict({metric: reduced_sim.results[metric] for metric in metrics})
-                    mres['cohort_cancers'] = reduced_sim.get_analyzer().cum_cancers_best
+                    mres['cohort_cancers'] = reduced_analyzer.cum_cancers_best
 
                     for ii, intv in enumerate(reduced_sim['interventions']):
                         intv_label = intv.label
