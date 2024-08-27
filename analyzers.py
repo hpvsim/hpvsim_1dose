@@ -41,4 +41,33 @@ class cohort_cancers(hpv.Analyzer):
 
         return
 
+    @staticmethod
+    def reduce(analyzers, use_mean=False, quantiles=None):
+        # Process quantiles
+        if quantiles is None:
+            quantiles = {'low':0.1, 'high':0.9}
+        if not isinstance(quantiles, dict):
+            try:
+                quantiles = {'low':float(quantiles[0]), 'high':float(quantiles[1])}
+            except Exception as E:
+                errormsg = f'Could not figure out how to convert {quantiles} into a quantiles object: must be a dict with keys low, high or a 2-element array ({str(E)})'
+                raise ValueError(errormsg)
 
+        # Get base analyzer properties and copy them into reduced analyzer
+        base_analyzer = analyzers[0]
+        reduced_analyzer = sc.dcp(base_analyzer)
+        ashape = base_analyzer.results.shape  # Figure out dimensions
+        new_ashape = ashape + (len(analyzers),)
+        raw = np.zeros(new_ashape)
+
+        # Pull out results for each analyzer
+        for a, analyzer in enumerate(analyzers):
+            raw[:, a] = analyzer.results
+
+        # Get quantiles
+        reduced_analyzer.results.best = np.quantile(raw, q=0.5, axis=-1)
+        reduced_analyzer.results.low  = np.quantile(raw, q=quantiles['low'], axis=-1)
+        reduced_analyzer.results.high = np.quantile(raw, q=quantiles['high'], axis=-1)
+
+        return reduced_analyzer
+        
