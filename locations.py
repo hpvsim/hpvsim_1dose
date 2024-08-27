@@ -9,7 +9,6 @@ locations = [
     'cameroon',         # 2
     'cote divoire',     # 3
     'ethiopia',         # 4
-    'malawi',           # 5
     'mali',             # 6
     'mozambique',       # 7
     'myanmar',          # 8
@@ -17,7 +16,6 @@ locations = [
     'sierra leone',     # 10
     'tanzania',         # 11
     'togo',             # 12
-    'uganda',           # 13
     'zambia',           # 14
 ]
 
@@ -25,36 +23,36 @@ nosbdata_locations = ["cote d'ivoire", "cote divoire"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
-vx_intro = {
-    'bangladesh': 2023,
-    'burkina faso': 2022,
-    'cameroon': 2020,
-    'cote divoire': 2019,
-    'ethiopia': 2018,
-    'malawi': 2019,
-    'mozambique': 2021,
-    'myanmar': 2020,
-    'nigeria': 2023,
-    'sierra leone': 2022,
-    'tanzania': 2018,
-    'togo': 2023,
-    'uganda': 2015,
-    'zambia': 2019,
+vx_coverage = {
+    # Country        9-14, 15-16
+    'bangladesh':   [1.00, 0.28],
+    'burkina faso': [0.54, 0.00],
+    'cameroon':     [0.19, 0.00],
+    'cote divoire': [0.29, 0.00],
+    'ethiopia':     [1.00, 0.72],
+    'mali':         [0.14, 0.00],
+    'mozambique':   [0.48, 0.00],
+    'myanmar':      [0.42, 0.00],
+    'nigeria':      [0.90, 0.00],
+    'sierra leone': [0.20, 0.00],
+    'tanzania':     [0.88, 0.00],
+    'togo':         [1.00, 0.81],
+    'zambia':       [1.00, 0.64],
 }
 
-vx_doses = {
-    'bangladesh': [3639200, 6157000],
-    'burkina faso': [747910, 297510],
-    'cameroon': [219120, 193530],
-    'cote divoire': [304800, 335960],
-    'ethiopia': [1012100,  10745350],  # [2 doses, 1 dose]
-    # 'malawi': [2019],
-    'mozambique': [210140,  1197950],  # [2 doses, 1 dose]
-    'myanmar': [600000, 679800],
-    'nigeria': [6597400, 9240400],
-    'sierra leone': [89310, 83050],  # [2 doses, 1 dose]
-    'tanzania': [679750, 4264900],  # [2 doses, 1 dose]
-    'togo': [682800, 131600],
-    # 'uganda': 2015,
-    'zambia': [1585940, 381530],
+vx_cf = {
+    # Country        9-14, 15-16
+    'bangladesh':   [0.55, 0.00],
+    'burkina faso': [0.27, 0.00],
+    'cameroon':     [0.09, 0.00],
+    'cote divoire': [0.14, 0.00],
+    'ethiopia':     [0.64, 0.00],
+    'mali':         [0.07, 0.00],
+    'mozambique':   [0.26, 0.00],
+    'myanmar':      [0.21, 0.00],
+    'nigeria':      [0.45, 0.00],
+    'sierra leone': [0.13, 0.00],
+    'tanzania':     [0.47, 0.00],
+    'togo':         [0.63, 0.00],
+    'zambia':       [0.60, 0.00],
 }
