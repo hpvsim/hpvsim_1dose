@@ -18,6 +18,7 @@ os.environ.update(
 import numpy as np
 import sciris as sc
 import hpvsim as hpv
+import pandas as pd
 
 # Imports from this repository
 import run_sim as rs
@@ -129,6 +130,7 @@ if __name__ == '__main__':
     T = sc.timer()
     do_run = True
     do_process = True
+    do_compile = False
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
@@ -165,6 +167,8 @@ if __name__ == '__main__':
                     reduced_sim = mlist[si].reduce(output=True)
                     mres = sc.objdict({metric: reduced_sim.results[metric] for metric in metrics})
                     mres['cohort_cancers'] = reduced_analyzer.cum_cancers_best
+                    mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_best
+                    mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_best
 
                     for ii, intv in enumerate(reduced_sim['interventions']):
                         intv_label = intv.label
@@ -175,5 +179,19 @@ if __name__ == '__main__':
                     msim_dict[scen_label] = mres
 
                 sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
+
+    if do_compile:
+        dfs = []
+        for location in loc.locations:
+            dd = dict()
+            fnlocation = location.replace(' ', '_')
+            msim_dict = sc.loadobj(f'raw_results/{fnlocation}_vx_scens.obj')
+            dd['location'] = location
+            for scen in msim_dict.keys():
+                dd[scen] = msim_dict[scen]['cohort_cancers']
+                dd[scen+' - lb'] = msim_dict[scen]['cohort_cancers_low']
+                dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
+            dfs += [pd.DataFrame(dd, index=[0])]
+        ddf = pd.concat(dfs)
 
     print('Done.')
