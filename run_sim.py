@@ -112,7 +112,7 @@ def run_popsims(end=2024, verbose=0.1):
     """ Run the simulations """
     msim = make_popsims(end=end)
     msim.run(verbose=verbose)
-    msim.save(f'results/popsims.obj')
+    msim.save(f'results/popsims.obj', keep_people=True)
     return msim
 
 
