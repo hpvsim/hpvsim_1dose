@@ -112,7 +112,7 @@ def make_popsims(end=2024):
 def run_popsims(end=2024, verbose=0.1):
     """ Run the simulations """
     msim = make_popsims(end=end)
-    msim.run(verbose=verbose)
+    msim.run(verbose=verbose, keep_people=True)
     sc.saveobj('results/popsims.obj', msim)
     dd = dict()
     for sim in msim.sims:
