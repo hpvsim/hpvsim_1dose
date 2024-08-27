@@ -15,6 +15,7 @@ os.environ.update(
 import numpy as np
 import sciris as sc
 import hpvsim as hpv
+import pandas as pd
 
 # Imports from this repository
 import pars_data as dp
@@ -112,7 +113,16 @@ def run_popsims(end=2024, verbose=0.1):
     """ Run the simulations """
     msim = make_popsims(end=end)
     msim.run(verbose=verbose)
-    msim.save(f'results/popsims.obj', keep_people=True)
+    sc.saveobj('results/popsims.obj', msim)
+    dd = dict()
+    for sim in msim.sims:
+        location = sim.pars['location']
+        dd['location'] = location
+        ppl = sim.people
+        ps = sim.pars['pop_scale']
+        for age in range(9, 16):
+            dd[age] = np.count_nonzero(ppl.is_female & (ppl.age>age) & (ppl.age<=(age+1)) & ppl.alive)*ps
+    sc.saveobj('results/popsims_dict.obj', dd)
     return msim
 
 
