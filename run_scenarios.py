@@ -26,7 +26,7 @@ import locations as loc
 
 # Settings - used here and imported elsewhere
 debug = 0
-n_seeds = [5, 1][debug]  # How many seeds to run per cluster
+n_seeds = [20, 1][debug]  # How many seeds to run per cluster
 
 
 # %% Create interventions
@@ -249,7 +249,17 @@ if __name__ == '__main__':
             dd = dict()
             fnlocation = location.replace(' ', '_')
             msim_dict = sc.loadobj(f'raw_results/{fnlocation}_vx_scens.obj')
+
+            # Process diffs
+            diffs = msim_dict['Double dose']['raw_cohort_cancers'] - msim_dict['Single dose']['raw_cohort_cancers']
+            diffs_med = np.median(diffs, axis=1).sum()
+            diffs_lb = np.quantile(diffs, q=0.05, axis=1).sum()
+            diffs_ub = np.quantile(diffs, q=0.95, axis=1).sum()
+
             dd['location'] = location
+            # dd['averted'] = diffs_med
+            # dd['averted - lb'] = diffs_lb
+            # dd['averted - ub'] = diffs_ub
             for scen in msim_dict.keys():
                 dd[scen] = msim_dict[scen]['cohort_cancers']
                 dd[scen+' - lb'] = msim_dict[scen]['cohort_cancers_low']
