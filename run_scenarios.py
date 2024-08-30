@@ -108,10 +108,10 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    sq_routine_coverage = loc.vx_coverage[location][0]
-    sq_mac_coverage = loc.vx_coverage[location][1]
-    cf_routine_coverage = loc.vx_cf[location][0]
-    cf_mac_coverage = loc.vx_cf[location][1]
+    sq_routine_coverage = loc.vx_coverage_2023[location][0]
+    sq_mac_coverage = loc.vx_coverage_2023[location][1]
+    cf_routine_coverage = loc.vx_cf_2023[location][0]
+    cf_mac_coverage = loc.vx_cf_2023[location][1]
 
     routine_single_vx = hpv.campaign_vx(
         prob=sq_routine_coverage,

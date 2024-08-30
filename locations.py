@@ -56,3 +56,38 @@ vx_cf = {
     'togo':         [0.56, 0.00],  # [0.63, 0.00],
     'zambia':       [0.57, 0.00],  # [0.60, 0.00],
 }
+
+vx_coverage_2023 = {
+    # Country        9-14, 15-16
+    'bangladesh':   [0.37, 0.00],
+    'burkina faso': [0.37, 0.00],
+    'cameroon':     [0.10, 0.00],
+    'cote divoire': [0.13, 0.00],
+    'ethiopia':     [0.05, 0.00],
+    'mali':         [0.00, 0.00],
+    'mozambique':   [0.04, 0.00],
+    'myanmar':      [0.19, 0.00],
+    'nigeria':      [0.36, 0.00],
+    'sierra leone': [0.07, 0.00],
+    'tanzania':     [0.84, 0.00],
+    'togo':         [0.94, 0.00],
+    'zambia':       [0.91, 0.00],
+}
+
+vx_cf_2023 = {
+    # Country        9-14, 15-16
+    'bangladesh':   [0.18, 0.00],
+    'burkina faso': [0.18, 0.00],
+    'cameroon':     [0.05, 0.00],
+    'cote divoire': [0.06, 0.00],
+    'ethiopia':     [0.05, 0.00],
+    'mali':         [0.00, 0.00],
+    'mozambique':   [0.04, 0.00],
+    'myanmar':      [0.09, 0.00],
+    'nigeria':      [0.18, 0.00],
+    'sierra leone': [0.07, 0.00],
+    'tanzania':     [0.06, 0.00],
+    'togo':         [0.47, 0.00],
+    'zambia':       [0.46, 0.00],
+}
+
