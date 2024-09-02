@@ -15,11 +15,13 @@ os.environ.update(
 import numpy as np
 import sciris as sc
 import hpvsim as hpv
+import pandas as pd
 
 # Imports from this repository
 import pars_data as dp
 import utils as ut
 import locations as loc
+import analyzers as an
 
 # %% Settings and filepaths
 # Debug switch
@@ -62,18 +64,18 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib_pars is not None:
         pars = sc.mergedicts(pars, calib_pars)
 
-    sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
+    sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=an.cohort_cancers(), datafile=datafile, rand_seed=seed)
 
     return sim
 
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
-        do_save=True, calib_par_stem=None, calib_pars=None, end=2020):
+        do_save=True, calib_pars=None, end=2020):
 
     dflocation = location.replace(' ', '_')
-    if calib_pars is None and calib_par_stem is not None:
-        calib_pars = sc.loadobj(f'results/{dflocation + calib_par_stem}.obj')
+    if calib_pars is None:
+        calib_pars = sc.loadobj(f'results/{dflocation}_pars.obj')
 
     # Make sim
     sim = make_sim(
@@ -97,6 +99,35 @@ def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
     return sim
 
 
+def make_popsims(end=2024):
+    """ Set up scenarios """
+    sims = sc.autolist()
+    for location in loc.locations:
+        sim = make_sim(location=location, end=end)
+        sims += sim
+    msim = hpv.MultiSim(sims)
+    return msim
+
+
+def run_popsims(end=2024, verbose=0.1):
+    """ Run the simulations """
+    msim = make_popsims(end=end)
+    msim.run(verbose=verbose, keep_people=True)
+    dfs = []
+    for sim in msim.sims:
+        dd = dict()
+        location = sim.pars['location']
+        dd['location'] = location
+        ppl = sim.people
+        ps = sim.pars['pop_scale']
+        for age in range(9, 20):
+            dd[age] = np.count_nonzero(ppl.is_female & (ppl.age>age) & (ppl.age<=(age+1)) & ppl.alive)*ps
+        dfs += [pd.DataFrame(dd, index=[2020])]
+    ddf = pd.concat(dfs)
+    sc.saveobj('results/simpops.df', ddf)
+    return msim
+
+
 def run_parsets(
         location=None, debug=False, verbose=.1, interventions=None, save_results=True, **kwargs):
     ''' Run multiple simulations in parallel '''
@@ -117,9 +148,12 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    for location in loc.locations:
-        # sim = run_sim(location=location)
-        msim = run_parsets(location=location)
+    run_popsims(end=2024, verbose=0.1)
+
+    # for location in ['bangladesh']:  #loc.locations:
+        # sim = make_sim(location=location, end=2025)
+        # sim = run_sim(location=location, end=2100)
+        # msim = run_parsets(location=location)
 
     T.toc('Done')
 
