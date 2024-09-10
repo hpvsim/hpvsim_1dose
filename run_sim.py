@@ -64,7 +64,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib_pars is not None:
         pars = sc.mergedicts(pars, calib_pars)
 
-    sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=None, datafile=datafile, rand_seed=seed)
+    sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
     # sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=an.cohort_cancers(), datafile=datafile, rand_seed=seed)
 
     return sim
