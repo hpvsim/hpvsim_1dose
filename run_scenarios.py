@@ -27,7 +27,8 @@ import locations as loc
 # Settings - used here and imported elsewhere
 debug = 0
 n_seeds = [20, 1][debug]  # How many seeds to run per cluster
-
+serial = True
+if serial: n_seeds = 1
 
 # %% Create interventions
 
@@ -109,26 +110,26 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    # 2023 only
+    # # 2023 only
     sq_routine_2023 = loc.vx_coverage_2023_routine[location]
-    sq_mac11_14_2023 = loc.vx_coverage_2023_macs[location][0]
-    sq_mac15_16_2023 = loc.vx_coverage_2023_macs[location][1]
+    # sq_mac11_14_2023 = loc.vx_coverage_2023_macs[location][0]
+    # sq_mac15_16_2023 = loc.vx_coverage_2023_macs[location][1]
     cf_routine_2023 = loc.vx_coverage_2023_cf_routine[location]
-    cf_mac11_14_2023 = loc.vx_coverage_2023_cf_macs[location][0]
-
-    # 2024 only
+    # cf_mac11_14_2023 = loc.vx_coverage_2023_cf_macs[location][0]
+    #
+    # # 2024 only
     sq_routine_2024 = loc.vx_coverage_2024_routine[location]
-    sq_mac11_14_2024 = loc.vx_coverage_2024_macs[location][0]
-    sq_mac15_16_2024 = loc.vx_coverage_2024_macs[location][1]
+    # sq_mac11_14_2024 = loc.vx_coverage_2024_macs[location][0]
+    # sq_mac15_16_2024 = loc.vx_coverage_2024_macs[location][1]
     cf_routine_2024 = loc.vx_coverage_2024_cf_routine[location]
-    cf_mac11_14_2024 = loc.vx_coverage_2024_cf_macs[location][0]
+    # cf_mac11_14_2024 = loc.vx_coverage_2024_cf_macs[location][0]
 
     # Both
     sq_mac11_14_both = loc.vx_coverage_both_macs[location][0]
     sq_mac15_16_both = loc.vx_coverage_both_macs[location][1]
     cf_mac11_14_both = loc.vx_coverage_both_cf_macs[location][0]
 
-    # 2023 only - status quo
+    # # 2023 only - status quo
     routine_single_vx_23 = hpv.campaign_vx(
         prob=sq_routine_2023,
         years=year,
@@ -138,28 +139,28 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Single dose routine 2023'
     )
-    mac11_single_vx_23 = hpv.campaign_vx(
-        prob=sq_mac11_14_2023,
-        years=year,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 11-14'
-    )
-    mac15_single_vx_23 = hpv.campaign_vx(
-        prob=sq_mac15_16_2023,
-        years=year,
-        product=singledose,
-        age_range=mac15_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 15-16'
-    )
-
-    vx_scenarios['Single dose 2023'] = [routine_single_vx_23, mac11_single_vx_23, mac15_single_vx_23]
-
-    # 2023 counterfactual
+    # mac11_single_vx_23 = hpv.campaign_vx(
+    #     prob=sq_mac11_14_2023,
+    #     years=year,
+    #     product=singledose,
+    #     age_range=mac11_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Single dose MAC 11-14'
+    # )
+    # mac15_single_vx_23 = hpv.campaign_vx(
+    #     prob=sq_mac15_16_2023,
+    #     years=year,
+    #     product=singledose,
+    #     age_range=mac15_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Single dose MAC 15-16'
+    # )
+    #
+    # vx_scenarios['Single dose 2023'] = [routine_single_vx_23, mac11_single_vx_23, mac15_single_vx_23]
+    #
+    # # 2023 counterfactual
     routine_single_vx_cf_23 = hpv.campaign_vx(
         prob=cf_routine_2023,
         years=year,
@@ -169,19 +170,19 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Double dose routine 2023'
     )
-    mac11_single_vx_cf_23 = hpv.campaign_vx(
-        prob=cf_mac11_14_2023,
-        years=year,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Double dose MAC 11-14'
-    )
-
-    vx_scenarios['Double dose 2023'] = [routine_single_vx_cf_23, mac11_single_vx_cf_23]
-
-    # 2024 only - status quo
+    # mac11_single_vx_cf_23 = hpv.campaign_vx(
+    #     prob=cf_mac11_14_2023,
+    #     years=year,
+    #     product=singledose,
+    #     age_range=mac11_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Double dose MAC 11-14'
+    # )
+    #
+    # vx_scenarios['Double dose 2023'] = [routine_single_vx_cf_23, mac11_single_vx_cf_23]
+    #
+    # # 2024 only - status quo
     routine_single_vx_24 = hpv.campaign_vx(
         prob=sq_routine_2024,
         years=year+1,
@@ -191,28 +192,28 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Single dose routine 2024'
     )
-    mac11_single_vx_24 = hpv.campaign_vx(
-        prob=sq_mac11_14_2024,
-        years=year+1,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 11-14 2024'
-    )
-    mac15_single_vx_24 = hpv.campaign_vx(
-        prob=sq_mac15_16_2024,
-        years=year,
-        product=singledose,
-        age_range=mac15_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 15-16 2024'
-    )
-
-    vx_scenarios['Single dose 2024'] = [routine_single_vx_24, mac11_single_vx_24, mac15_single_vx_24]
-
-    # 2024 counterfactual
+    # mac11_single_vx_24 = hpv.campaign_vx(
+    #     prob=sq_mac11_14_2024,
+    #     years=year+1,
+    #     product=singledose,
+    #     age_range=mac11_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Single dose MAC 11-14 2024'
+    # )
+    # mac15_single_vx_24 = hpv.campaign_vx(
+    #     prob=sq_mac15_16_2024,
+    #     years=year,
+    #     product=singledose,
+    #     age_range=mac15_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Single dose MAC 15-16 2024'
+    # )
+    #
+    # vx_scenarios['Single dose 2024'] = [routine_single_vx_24, mac11_single_vx_24, mac15_single_vx_24]
+    #
+    # # 2024 counterfactual
     routine_single_vx_cf_24 = hpv.campaign_vx(
         prob=cf_routine_2024,
         years=year+1,
@@ -222,17 +223,17 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Double dose routine 2024'
     )
-    mac11_single_vx_cf_24 = hpv.campaign_vx(
-        prob=cf_mac11_14_2024,
-        years=year+1,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Double dose MAC 11-14 2024'
-    )
-
-    vx_scenarios['Double dose 2024'] = [routine_single_vx_cf_24, mac11_single_vx_cf_24]
+    # mac11_single_vx_cf_24 = hpv.campaign_vx(
+    #     prob=cf_mac11_14_2024,
+    #     years=year+1,
+    #     product=singledose,
+    #     age_range=mac11_age,
+    #     eligibility=eligibility,
+    #     interpolate=False,
+    #     label='Double dose MAC 11-14 2024'
+    # )
+    #
+    # vx_scenarios['Double dose 2024'] = [routine_single_vx_cf_24, mac11_single_vx_cf_24]
 
     # BOTH - status quo
     mac11_single_vx = hpv.campaign_vx(
@@ -303,24 +304,25 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = False
+    do_run = True
     do_process = False
-    do_compile = True
+    do_compile = False
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in loc.locations:
+        for location in ['ethiopia']:  #loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
-            msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
 
-            if debug:
-                vx_scenarios = {'Baseline': []}
+            if serial:
+                # vx_scenarios = {'Baseline': []}
                 msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
                 for sim in msim.sims:
                     sim.run(verbose=0.1)
+            else:
+                msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
 
             if do_process:
 

@@ -48,6 +48,7 @@ def plot_figS2(locations):
 
         ax.plot(2020, data['value'].values[0], marker='s', color=colors[1], label='Globocan')
         ax.set_ylabel('ASR incidence (per 100k)')
+        ax.set_title(location.capitalize())
         ax.legend()
         ax.set_ylim(bottom=0)
 

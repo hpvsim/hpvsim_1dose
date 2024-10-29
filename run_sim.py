@@ -64,8 +64,8 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib_pars is not None:
         pars = sc.mergedicts(pars, calib_pars)
 
-    sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
-    # sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=an.cohort_cancers(), datafile=datafile, rand_seed=seed)
+    # sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
+    sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=an.cohort_cancers(), datafile=datafile, rand_seed=seed)
 
     return sim
 
@@ -149,12 +149,12 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    run_popsims(end=2024, verbose=0.1)
+    # run_popsims(end=2024, verbose=0.1)
 
-    # for location in ['bangladesh']:  #loc.locations:
-        # sim = make_sim(location=location, end=2025)
-        # sim = run_sim(location=location, end=2100)
-        # msim = run_parsets(location=location)
+    for location in ['mali']:  #loc.locations:
+        sim = make_sim(location=location, end=2025)
+        sim = run_sim(location=location, end=2100)
+        msim = run_parsets(location=location)
 
     T.toc('Done')
 
