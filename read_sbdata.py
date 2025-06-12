@@ -145,9 +145,6 @@ def get_sb_from_sims(dist_type='lognormal', marriage_scale=1, debut_bias=[0,0],
     countries_to_run = locations
     sims = rs.run_sims(
         locations=countries_to_run,
-        calib_par_stem=calib_par_stem,
-        ressubfolder=ressubfolder,
-        age_pyr=True,
         analyzers=[an.AFS(), an.prop_married(), hpv.snapshot(timepoints=['2020'])],
         debug=debug,
         marriage_scale=marriage_scale,
