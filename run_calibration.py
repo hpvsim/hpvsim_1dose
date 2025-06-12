@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     T = sc.timer()
     filestem = ''
-    new_locations = ['cambodia', 'gambia', 'lao', 'nepal']
+    new_locations = ['cambodia', 'gambia', 'laos', 'nepal']
 
     # Run calibration
     if 'run_calibration' in to_run:
