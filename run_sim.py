@@ -72,7 +72,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
-        do_save=True, calib_pars=None, end=2020):
+        do_save=True, calib_pars=None, end=2100):
 
     dflocation = location.replace(' ', '_')
     if calib_pars is None:
@@ -149,12 +149,12 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    run_popsims(end=2024, verbose=0.1)
+    # run_popsims(end=2024, verbose=0.1)
 
-    # for location in ['bangladesh']:  #loc.locations:
+    for location in loc.locations:
         # sim = make_sim(location=location, end=2025)
         # sim = run_sim(location=location, end=2100)
-        # msim = run_parsets(location=location)
+        msim = run_parsets(location=location)
 
     T.toc('Done')
 
