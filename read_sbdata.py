@@ -444,7 +444,7 @@ def plot_casuals():
 if __name__ == '__main__': 
 
     dist_type = 'lognormal'
-    countries, dff, df2, rvs = read_debut_data(dist_type=dist_type)
+    # countries, dff, df2, rvs = read_debut_data(dist_type=dist_type)
 
     do_run = True
 
