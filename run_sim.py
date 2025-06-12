@@ -29,7 +29,7 @@ debug = 0  # Run with smaller population sizes and in serial
 
 
 # %% Simulation creation functions
-def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions=None, seed=1, end=None, datafile=None):
+def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions=None, analyzers=None, seed=1, end=None, datafile=None):
     """"
     Define parameters, analyzers, and interventions for the simulation
     """
@@ -64,18 +64,18 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib_pars is not None:
         pars = sc.mergedicts(pars, calib_pars)
 
-    # sim = hpv.Sim(pars=pars, interventions=interventions, datafile=datafile, rand_seed=seed)
-    if calib is False:
-        analyzers = an.cohort_cancers()
+    # Analyzers
+    if calib:
+        analyzers = None
     else:
-        analyzers = []
+        analyzers = [an.cohort_cancers()] + sc.tolist(analyzers)
     sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=analyzers, datafile=datafile, rand_seed=seed)
 
     return sim
 
 
 # %% Simulation running functions
-def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
+def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, verbose=0.2,
         do_save=True, calib_pars=None, end=2100):
 
     dflocation = location.replace(' ', '_')
@@ -88,6 +88,7 @@ def run_sim(location=None, interventions=None, debug=0, seed=1, verbose=0.2,
         debug=debug,
         end=end,
         interventions=interventions,
+        analyzers=analyzers,
         calib_pars=calib_pars
     )
     sim['rand_seed'] = seed
