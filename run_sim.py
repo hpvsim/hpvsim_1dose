@@ -68,7 +68,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
     if calib is False:
         analyzers = an.cohort_cancers()
     else:
-        analyzers = None
+        analyzers = []
     sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=analyzers, datafile=datafile, rand_seed=seed)
 
     return sim
