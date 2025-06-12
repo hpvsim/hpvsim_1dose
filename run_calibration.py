@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
     # Run calibration
     if 'run_calibration' in to_run:
-        for location in locations:
+        for location in new_locations:
             sim, calib = run_calib(location=location, n_trials=n_trials, n_workers=n_workers,
                                    do_save=do_save, do_plot=False, filestem=filestem)
 
