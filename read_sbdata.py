@@ -134,14 +134,13 @@ def read_marriage_data():
     return df
 
 
-def get_sb_from_sims(dist_type='lognormal', marriage_scale=1, debut_bias=[0,0],
-                     verbose=-1, calib_par_stem=None, ressubfolder=None, debug=False):
+def get_sb_from_sims(marriage_scale=1, debut_bias=[0, 0], verbose=-1, debug=False):
     '''
     Run sims with the sexual debut parameters inferred from DHA data, and save
     the proportion of people of each age who've ever had sex
     '''
 
-    locations = set.locations
+    locations = ['bangladesh']  #set.locations
     countries_to_run = locations
     sims = rs.run_sims(
         locations=countries_to_run,
@@ -446,7 +445,6 @@ if __name__ == '__main__':
 
     if do_run:
         sims, afs_df, pm_df, agediff_df, casual_df = get_sb_from_sims(
-            dist_type=dist_type,
             marriage_scale=1,
             debut_bias=[-1,-1],
             debug=False,
