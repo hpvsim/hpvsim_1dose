@@ -77,7 +77,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, marriage_scal
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, verbose=0.2,
-        marriage_scale=marriage_scale, debut_bias=debut_bias, do_save=True, calib_pars=None, end=2100):
+        marriage_scale=None, debut_bias=None, do_save=True, calib_pars=None, end=2100):
 
     dflocation = location.replace(' ', '_')
     if calib_pars is None:
@@ -88,11 +88,11 @@ def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, 
         location=location,
         debug=debug,
         marriage_scale=marriage_scale,
-        debut_bias=debut_bias
+        debut_bias=debut_bias,
         end=end,
         interventions=interventions,
         analyzers=analyzers,
-        calib_pars=calib_pars
+        calib_pars=calib_pars,
     )
     sim['rand_seed'] = seed
     sim.label = f'{location}--{seed}'
