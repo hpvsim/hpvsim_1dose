@@ -82,6 +82,9 @@ def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, 
     dflocation = location.replace(' ', '_')
     if calib_pars is None:
         calib_pars = sc.loadobj(f'results/{dflocation}_pars.obj')
+        if 'hiv_pars' in calib_pars:
+            # Remove hiv_pars if it exists, as we are not running HIV simulations here
+            calib_pars.pop('hiv_pars', None)
 
     # Make sim
     sim = make_sim(
