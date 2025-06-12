@@ -29,7 +29,8 @@ debug = 0  # Run with smaller population sizes and in serial
 
 
 # %% Simulation creation functions
-def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions=None, analyzers=None, seed=1, end=None, datafile=None):
+def make_sim(location=None, calib=False, calib_pars=None, debug=0, marriage_scale=None, debut_bias=None,
+            interventions=None, analyzers=None, seed=1, end=None, datafile=None):
     """"
     Define parameters, analyzers, and interventions for the simulation
     """
@@ -46,9 +47,9 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
         network='default',
         genotypes=[16, 18, 'hi5', 'ohr'],
         location=location,
-        debut=ut.make_sb_data(location=location),
+        debut=ut.make_sb_data(location=location, debut_bias=debut_bias),
         mixing=dp.mixing[location],
-        layer_probs=dp.make_layer_probs(location=location),
+        layer_probs=dp.make_layer_probs(marriage_scale=marriage_scale, location=location),
         f_partners=dp.f_partners,
         m_partners=dp.m_partners,
         init_hpv_dist=dp.init_genotype_dist[location],
@@ -76,7 +77,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, interventions
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, verbose=0.2,
-        do_save=True, calib_pars=None, end=2100):
+        marriage_scale=marriage_scale, debut_bias=debut_bias, do_save=True, calib_pars=None, end=2100):
 
     dflocation = location.replace(' ', '_')
     if calib_pars is None:
@@ -86,6 +87,8 @@ def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, 
     sim = make_sim(
         location=location,
         debug=debug,
+        marriage_scale=marriage_scale,
+        debut_bias=debut_bias
         end=end,
         interventions=interventions,
         analyzers=analyzers,
@@ -135,14 +138,13 @@ def run_popsims(end=2024, verbose=0.1):
 
 
 def run_sims(
-        locations=None, age_pyr=True, debug=False, verbose=-1, analyzers=None, dist_type='lognormal',
+        locations=None, age_pyr=True, debug=False, verbose=-1, analyzers=None,
         marriage_scale=1, debut_bias=[0, 0], calib_par_stem=None, ressubfolder=None, do_save=False, *args, **kwargs
 ):
     """ Run multiple simulations in parallel """
 
-    kwargs = sc.mergedicts(dict(debug=debug, verbose=verbose, analyzers=analyzers, dist_type=dist_type, age_pyr=age_pyr,
-                                marriage_scale=marriage_scale, calib_par_stem=calib_par_stem, ressubfolder=ressubfolder,
-                                debut_bias=debut_bias), kwargs)
+    kwargs = sc.mergedicts(dict(debug=debug, verbose=verbose, analyzers=analyzers, age_pyr=age_pyr,
+                                marriage_scale=marriage_scale, debut_bias=debut_bias), kwargs)
     simlist = sc.parallelize(run_sim, iterkwargs=dict(location=locations), kwargs=kwargs, serial=debug, die=True)
     sims = sc.objdict({location: sim for location, sim in zip(locations, simlist)})  # Convert from a list to a dict
 

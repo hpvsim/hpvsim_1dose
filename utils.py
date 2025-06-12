@@ -24,7 +24,7 @@ def map_sb_loc(location):
     return location
 
 
-def make_sb_data(location=None, dist_type='lognormal'):
+def make_sb_data(location=None, dist_type='lognormal', debut_bias=[0,0]):
 
     # Deal with missing countries and different spelling conventions
     if location in loc.nosbdata_locations:
@@ -47,8 +47,8 @@ def make_sb_data(location=None, dist_type='lognormal'):
         print(f'No data for {sb_location=}, {location=}')
 
     debut = dict(
-        f=dict(dist=distf, par1=par1f, par2=par2f),
-        m=dict(dist=distm, par1=par1m, par2=par2m),
+        f=dict(dist=distf, par1=par1f+debut_bias[0], par2=par2f),
+        m=dict(dist=distm, par1=par1m+debut_bias[1], par2=par2m),
     )
 
     return debut
