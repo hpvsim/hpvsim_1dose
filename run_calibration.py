@@ -23,8 +23,8 @@ import locations as loc
 
 # CONFIGURATIONS TO BE SET BY USERS BEFORE RUNNING
 to_run = [
-    'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
-    # 'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
+    # 'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
+    'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
 ]
 debug = False  # If True, this will do smaller runs that can be run locally for debugging
 do_save = True
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
     # Load the calibration, plot it, and save the best parameters -- usually locally
     if 'plot_calibration' in to_run:
-        for location in locations:
+        for location in new_locations:
             calib = load_calib(location=location, do_plot=True, save_pars=True, filestem=filestem)
 
     T.toc('Done')

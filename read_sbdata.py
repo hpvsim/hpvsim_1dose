@@ -14,8 +14,10 @@ import hpvsim.utils as hpu
 
 # Imports from this repository
 import utils as ut
+import analyzers as an
 import run_sim as rs
 import locations as set
+
 
 def percentiles_to_pars(x1, p1, x2, p2):
     """ Find the parameters of a normal distribution where:
@@ -146,7 +148,7 @@ def get_sb_from_sims(dist_type='lognormal', marriage_scale=1, debut_bias=[0,0],
         calib_par_stem=calib_par_stem,
         ressubfolder=ressubfolder,
         age_pyr=True,
-        analyzers=[ut.AFS(),ut.prop_married(),hpv.snapshot(timepoints=['2020'])],
+        analyzers=[an.AFS(), an.prop_married(), hpv.snapshot(timepoints=['2020'])],
         debug=debug,
         dist_type=dist_type,
         marriage_scale=marriage_scale,
@@ -444,7 +446,7 @@ if __name__ == '__main__':
     dist_type = 'lognormal'
     countries, dff, df2, rvs = read_debut_data(dist_type=dist_type)
 
-    do_run = False
+    do_run = True
 
     if do_run:
         sims, afs_df, pm_df, agediff_df, casual_df = get_sb_from_sims(
