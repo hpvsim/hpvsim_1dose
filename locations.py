@@ -6,20 +6,24 @@ Locations
 locations = [
     'bangladesh',       # 0
     'burkina faso',     # 1
-    'cameroon',         # 2
-    'cote divoire',     # 3
-    'ethiopia',         # 4
-    'mali',             # 6
-    'mozambique',       # 7
-    'myanmar',          # 8
-    'nigeria',          # 9
-    'sierra leone',     # 10
-    'tanzania',         # 11
-    'togo',             # 12
-    'zambia',           # 14
+    'cambodia',         # 2
+    'cameroon',         # 3
+    'cote divoire',     # 4
+    'ethiopia',         # 5
+    'gambia',           # 6
+    'laos',             # 7
+    'mali',             # 8
+    'mozambique',       # 9
+    'myanmar',          # 10
+    'nepal',            # 11
+    'nigeria',          # 12
+    'sierra leone',     # 13
+    'tanzania',         # 14
+    'togo',             # 15
+    'zambia',           # 16
 ]
 
-nosbdata_locations = ["cote d'ivoire", "cote divoire"]
+nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 

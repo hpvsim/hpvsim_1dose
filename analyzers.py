@@ -36,6 +36,8 @@ class cohort_cancers(hpv.Analyzer):
             current_age_range = [self.cohort_age[0]+time_elapsed, self.cohort_age[1]+time_elapsed]
 
             cic = (ppl.date_cancerous == sim.t) & (ppl.age >= current_age_range[0]) & (ppl.age <= current_age_range[1])
+            if idx == 73:
+                print('hi')
             if cic.any():
                 self.results[idx] += sum(ppl.scale[hpu.true(cic)])
 
@@ -45,7 +47,7 @@ class cohort_cancers(hpv.Analyzer):
     def reduce(analyzers, use_mean=False, quantiles=None):
         # Process quantiles
         if quantiles is None:
-            quantiles = {'low':0.1, 'high':0.9}
+            quantiles = {'low': 0.1, 'high': 0.9}
         if not isinstance(quantiles, dict):
             try:
                 quantiles = {'low':float(quantiles[0]), 'high':float(quantiles[1])}

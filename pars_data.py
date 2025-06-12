@@ -152,7 +152,6 @@ def make_layer_probs(location=None, marriage_scale=1, fitto='dhs'):
             0, 0, 0.1, 0.3, 0.3, 0.3, 0.3, 0.5, 0.6, 0.5, 0.4, 0.1, 0.01, 0.01, 0.01, 0.01
         ])
 
-
     return layer_probs
 
 

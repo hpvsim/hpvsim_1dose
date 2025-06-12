@@ -20,7 +20,7 @@ import utils as ut
 #%% Plotting functions
 def plot_figS2(locations):
 
-    ut.set_font(14)
+    ut.set_font(24)
     colors = sc.gridcolors(2)
 
     n_plots = len(locations)
@@ -48,6 +48,7 @@ def plot_figS2(locations):
 
         ax.plot(2020, data['value'].values[0], marker='s', color=colors[1], label='Globocan')
         ax.set_ylabel('ASR incidence (per 100k)')
+        # sc.SIticks(ax)
         ax.set_title(location.capitalize())
         ax.legend()
         ax.set_ylim(bottom=0)
@@ -55,12 +56,12 @@ def plot_figS2(locations):
         plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/figS2.png", dpi=100)
+    pl.savefig(f"figures/fig_asr.png", dpi=100)
 
 
 # %% Run as a script
 if __name__ == '__main__':
 
-    plot_figS2(loc.locations)
+    plot_figS2(['nigeria', 'ethiopia'])
 
     print('Done.') 
