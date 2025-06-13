@@ -243,6 +243,9 @@ if __name__ == '__main__':
         for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
+            if 'hiv_pars' in calib_pars:
+                # Remove hiv_pars if it exists, as we are not running HIV simulations here
+                calib_pars.pop('hiv_pars', None)
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
 
             if serial:
