@@ -40,6 +40,7 @@ vx_coverage_2023_routine = {
     'mali':         0.00,
     'mozambique':   0.21,
     'myanmar':      1.00,
+    'nepal':        0.00,
     'nigeria':      1.00,
     'sierra leone': 0.41,
     'tanzania':     0.37,
