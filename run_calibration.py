@@ -128,16 +128,17 @@ if __name__ == '__main__':
 
     T = sc.timer()
     filestem = ''
+    rerun_locations = [l for l in loc.locations if l not in ['myanmar', 'cambodia', 'gambia', 'laos', 'nepal']]  # Locations to rerun
 
     # Run calibration
     if 'run_calibration' in to_run:
-        for location in ['myanmar']:  #loc.locations:
+        for location in rerun_locations:
             sim, calib = run_calib(location=location, n_trials=n_trials, n_workers=n_workers,
                                    do_save=do_save, do_plot=False, filestem=filestem)
 
     # Load the calibration, plot it, and save the best parameters -- usually locally
     if 'plot_calibration' in to_run:
-        for location in loc.locations:
+        for location in rerun_locations:
             calib = load_calib(location=location, do_plot=True, save_pars=True, filestem=filestem)
 
     T.toc('Done')
