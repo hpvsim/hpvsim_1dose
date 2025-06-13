@@ -233,14 +233,14 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = True
+    do_run = False
     do_process = True
     do_compile = True
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in ['nepal', 'nigeria', 'sierra leone', 'tanzania', 'togo', 'zambia']:  #loc.locations:
+        for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             if 'hiv_pars' in calib_pars:
@@ -296,7 +296,7 @@ if __name__ == '__main__':
         for location in loc.locations:
             dd = dict()
             fnlocation = location.replace(' ', '_')
-            msim_dict = sc.loadobj(f'raw_results/{fnlocation}_vx_scens.obj')
+            msim_dict = sc.loadobj(f'results/{fnlocation}_vx_scens.obj')
 
             # # Process diffs
             # diffs = msim_dict['Double dose']['raw_cohort_cancers'] - msim_dict['Single dose']['raw_cohort_cancers']
