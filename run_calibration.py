@@ -128,17 +128,16 @@ if __name__ == '__main__':
 
     T = sc.timer()
     filestem = ''
-    new_locations = ['cambodia', 'gambia', 'laos', 'nepal']
 
     # Run calibration
     if 'run_calibration' in to_run:
-        for location in new_locations:
+        for location in loc.locations:
             sim, calib = run_calib(location=location, n_trials=n_trials, n_workers=n_workers,
                                    do_save=do_save, do_plot=False, filestem=filestem)
 
     # Load the calibration, plot it, and save the best parameters -- usually locally
     if 'plot_calibration' in to_run:
-        for location in new_locations:
+        for location in loc.locations:
             calib = load_calib(location=location, do_plot=True, save_pars=True, filestem=filestem)
 
     T.toc('Done')

@@ -244,8 +244,8 @@ def plot_sb(dist_type='lognormal'):
     n_countries = len(countries)
     n_rows, n_cols = sc.get_rows_cols(n_countries)
 
-    for sk,sex in {'f':'Women', 'm':'Men'}.items():
-        fig, axes = pl.subplots(n_rows, n_cols, figsize=(8,11))
+    for sk,sex in {'f':'Women'}.items():
+        fig, axes = pl.subplots(n_rows, n_cols, figsize=(8, 10))
         axes = axes.flatten()
         dfw = dff[sex]
 
@@ -275,6 +275,8 @@ def plot_sb(dist_type='lognormal'):
             ax.set_xlabel('')
 
         fig.tight_layout()
+        for i in [17,18,19]:
+            fig.delaxes(axes[i])  # delete empty axes
         pl.savefig(f"figures/SMs/fig_sb_{sex.lower()}.png", dpi=100)
 
     return
@@ -297,7 +299,7 @@ def plot_prop_married():
     n_rows, n_cols = sc.get_rows_cols(n_countries)
     colors = sc.gridcolors(1)
 
-    fig, axes = pl.subplots(n_rows, n_cols, figsize=(8, 11))
+    fig, axes = pl.subplots(n_rows, n_cols, figsize=(8, 10))
     if n_countries>1:
         axes = axes.flatten()
     else:
@@ -311,8 +313,12 @@ def plot_prop_married():
 
         # Plot data
         d_country = ut.map_sb_loc(country)
+
+        # Convert the age ranges to numeric values
+        df['Age'] = df['AgeRange'].apply(lambda x: int(x.split('-')[0]) if '-' in x else int(x))
+
         dfplot_d = df.loc[(df["Country"] == d_country)]
-        sns.scatterplot(ax=ax, data=dfplot_d, x="AgeRange", y="Percentage")
+        sns.scatterplot(ax=ax, data=dfplot_d, x="Age", y="Percentage")
 
         # Plot model
         location = ut.rev_map_sb_loc(country)
@@ -330,6 +336,8 @@ def plot_prop_married():
         ax.set_xlabel('')
 
     fig.tight_layout()
+    for i in [17, 18, 19]:
+        fig.delaxes(axes[i])  # delete empty axes
     pl.savefig(f"figures/SMs/fig_prop_married.png", dpi=100)
 
     return
@@ -350,7 +358,7 @@ def plot_age_diffs():
     n_rows, n_cols = sc.get_rows_cols(n_countries)
     colors = sc.gridcolors(1)
 
-    fig, axes = pl.subplots(n_rows, n_cols, figsize=(8, 11))
+    fig, axes = pl.subplots(n_rows, n_cols, figsize=(8, 10))
     if n_countries>1:
         axes = axes.flatten()
     else:
@@ -376,6 +384,8 @@ def plot_age_diffs():
         ax.set_xlabel('')
 
     fig.tight_layout()
+    for i in [17, 18, 19]:
+        fig.delaxes(axes[i])  # delete empty axes
     pl.savefig(f"figures/SMs/fig_age_diffs.png", dpi=100)
 
     return
@@ -441,7 +451,7 @@ if __name__ == '__main__':
     dist_type = 'lognormal'
     # countries, dff, df2, rvs = read_debut_data(dist_type=dist_type)
 
-    do_run = True
+    do_run = False
 
     if do_run:
         sims, afs_df, pm_df, agediff_df, casual_df = get_sb_from_sims(
@@ -454,7 +464,7 @@ if __name__ == '__main__':
     # Plotting functions
     # plot_sb(dist_type=dist_type)
     # plot_prop_married()
-    # plot_age_diffs()
+    plot_age_diffs()
     # plot_casuals()
 
     print('Done.')

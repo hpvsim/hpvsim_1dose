@@ -56,12 +56,12 @@ def plot_figS2(locations):
         plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/fig_asr.png", dpi=100)
+    pl.savefig(f"figures/figS5_asr.png", dpi=100)
 
 
 # %% Run as a script
 if __name__ == '__main__':
 
-    plot_figS2(['nigeria', 'ethiopia'])
+    plot_figS2(locations=loc.locations)
 
     print('Done.') 

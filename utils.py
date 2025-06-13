@@ -24,6 +24,14 @@ def map_sb_loc(location):
     return location
 
 
+def rev_map_sb_loc(location):
+    ''' Map between different representations of country names '''
+    location = location.lower()
+    # location = location.replace(' ', '_')
+    if location == "cote d'ivoire": location = 'cote divoire'
+    return location
+
+
 def make_sb_data(location=None, dist_type='lognormal', debut_bias=[0,0]):
 
     # Deal with missing countries and different spelling conventions
