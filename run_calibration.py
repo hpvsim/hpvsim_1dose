@@ -128,7 +128,15 @@ if __name__ == '__main__':
 
     T = sc.timer()
     filestem = ''
-    rerun_locations = [l for l in loc.locations if l not in ['myanmar', 'cambodia', 'gambia', 'laos', 'nepal']]  # Locations to rerun
+    rerun_locations = [
+        'mali',
+        'mozambique',
+        'nigeria',
+        'sierra leone',
+        'tanzania',
+        'togo',
+        'zambia',
+        ]
 
     # Run calibration
     if 'run_calibration' in to_run:
