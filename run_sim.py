@@ -69,7 +69,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, marriage_scal
     if calib:
         analyzers = None
     else:
-        analyzers = [an.cohort_cancers()] + sc.tolist(analyzers)
+        analyzers = [an.cohort_cancers(start=1980)] + sc.tolist(analyzers)
     sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=analyzers, datafile=datafile, rand_seed=seed)
 
     return sim
@@ -178,13 +178,14 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    run_popsims(end=2023, verbose=0.1)
-    new_locations = ['cambodia', 'gambia', 'laos', 'nepal']
+    # run_popsims(end=2023, verbose=0.1)
 
-    # for location in new_locations:  #loc.locations:
+
+    for location in ['myanmar']:  #loc.locations:
         # sim = make_sim(location=location, end=2025)
-        # sim = run_sim(location=location, end=2025)
+        sim = run_sim(location=location, end=2025)
         # msim = run_parsets(location=location)
+
 
     T.toc('Done')
 

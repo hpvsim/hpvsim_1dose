@@ -26,7 +26,7 @@ import locations as loc
 
 # Settings - used here and imported elsewhere
 debug = 0
-n_seeds = [20, 1][debug]  # How many seeds to run per cluster
+n_seeds = [1, 1][debug]  # How many seeds to run per cluster
 serial = False
 if serial: n_seeds = 1
 
@@ -240,13 +240,14 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
-        for location in loc.locations:
+        for location in ['myanmar']:  # loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             if 'hiv_pars' in calib_pars:
                 # Remove hiv_pars if it exists, as we are not running HIV simulations here
                 calib_pars.pop('hiv_pars', None)
             vx_scenarios = make_vx_scenarios(location=location, year=2023)
+            vx_scenarios = {k:vx_scenarios[k] for k in ['Baseline']}
 
             if serial:
                 # vx_scenarios = {'Baseline': []}
