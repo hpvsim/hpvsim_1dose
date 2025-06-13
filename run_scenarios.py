@@ -64,7 +64,6 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     ablation_eligible = lambda sim: sim.get_intervention('tx assigner').outcomes['ablation']
     ablation = hpv.treat_num(
         prob=treat_coverage,
-        annual_prob=False,
         product='ablation',
         eligibility=ablation_eligible,
         label='ablation'
@@ -74,7 +73,6 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
                                              sim.get_intervention('ablation').outcomes['unsuccessful'].tolist()))
     excision = hpv.treat_num(
         prob=treat_coverage,
-        annual_prob=False,
         product='excision',
         eligibility=excision_eligible,
         label='excision'
@@ -83,7 +81,6 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     radiation_eligible = lambda sim: sim.get_intervention('tx assigner').outcomes['radiation']
     radiation = hpv.treat_num(
         prob=treat_coverage/4,  # assume an additional dropoff in CaTx coverage
-        annual_prob=False,
         product=hpv.radiation(),
         eligibility=radiation_eligible,
         label='radiation'
