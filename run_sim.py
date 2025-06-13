@@ -178,7 +178,7 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    run_popsims(end=2024, verbose=0.1)
+    run_popsims(end=2023, verbose=0.1)
     new_locations = ['cambodia', 'gambia', 'laos', 'nepal']
 
     # for location in new_locations:  #loc.locations:
