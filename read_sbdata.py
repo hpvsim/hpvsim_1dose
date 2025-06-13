@@ -16,7 +16,7 @@ import hpvsim.utils as hpu
 import utils as ut
 import analyzers as an
 import run_sim as rs
-import locations as set
+import locations as loc
 
 
 def percentiles_to_pars(x1, p1, x2, p2):
@@ -140,7 +140,7 @@ def get_sb_from_sims(marriage_scale=1, debut_bias=[0, 0], verbose=-1, debug=Fals
     the proportion of people of each age who've ever had sex
     '''
 
-    locations = ['bangladesh']  #set.locations
+    locations = loc.locations
     countries_to_run = locations
     sims = rs.run_sims(
         locations=countries_to_run,
