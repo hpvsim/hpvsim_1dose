@@ -20,11 +20,11 @@ import utils as ut
 #%% Plotting functions
 def plot_figS2(locations):
 
-    ut.set_font(24)
+    ut.set_font(16)
     colors = sc.gridcolors(2)
 
     n_plots = len(locations)
-    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(25,12))
+    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12,10))
     axes = axes.flatten()
     resname = 'asr_cancer_incidence'
     plot_count = 0
@@ -52,6 +52,8 @@ def plot_figS2(locations):
         ax.set_title(location.capitalize())
         ax.legend()
         ax.set_ylim(bottom=0)
+        # Turn legend off
+        ax.legend().remove()
 
         plot_count += 1
 

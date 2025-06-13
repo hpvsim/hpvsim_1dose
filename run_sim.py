@@ -158,7 +158,6 @@ def run_sims(
     return sims
 
 
-
 def run_parsets(
         location=None, debug=False, verbose=.1, interventions=None, save_results=True, **kwargs):
     ''' Run multiple simulations in parallel '''
@@ -179,13 +178,13 @@ def run_parsets(
 if __name__ == '__main__':
     T = sc.timer()
 
-    # run_popsims(end=2024, verbose=0.1)
+    run_popsims(end=2024, verbose=0.1)
     new_locations = ['cambodia', 'gambia', 'laos', 'nepal']
 
-    for location in new_locations:  #loc.locations:
+    # for location in new_locations:  #loc.locations:
         # sim = make_sim(location=location, end=2025)
         # sim = run_sim(location=location, end=2025)
-        msim = run_parsets(location=location)
+        # msim = run_parsets(location=location)
 
     T.toc('Done')
 
