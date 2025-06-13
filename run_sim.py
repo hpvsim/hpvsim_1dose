@@ -69,7 +69,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, marriage_scal
     if calib:
         analyzers = []
     else:
-        analyzers = [an.cohort_cancers(start=1980)] + sc.tolist(analyzers)
+        analyzers = [an.cohort_cancers()] + sc.tolist(analyzers)
     sim = hpv.Sim(pars=pars, interventions=interventions, analyzers=analyzers, datafile=datafile, rand_seed=seed)
 
     return sim
