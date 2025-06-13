@@ -27,7 +27,7 @@ import locations as loc
 # Settings - used here and imported elsewhere
 debug = 0
 n_seeds = [20, 1][debug]  # How many seeds to run per cluster
-serial = True
+serial = False
 if serial: n_seeds = 1
 
 # %% Create interventions
@@ -110,26 +110,20 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    # # 2023 only
+    # 2023 routine
     sq_routine_2023 = loc.vx_coverage_2023_routine[location]
-    # sq_mac11_14_2023 = loc.vx_coverage_2023_macs[location][0]
-    # sq_mac15_16_2023 = loc.vx_coverage_2023_macs[location][1]
     cf_routine_2023 = loc.vx_coverage_2023_cf_routine[location]
-    # cf_mac11_14_2023 = loc.vx_coverage_2023_cf_macs[location][0]
-    #
-    # # 2024 only
-    sq_routine_2024 = loc.vx_coverage_2024_routine[location]
-    # sq_mac11_14_2024 = loc.vx_coverage_2024_macs[location][0]
-    # sq_mac15_16_2024 = loc.vx_coverage_2024_macs[location][1]
-    cf_routine_2024 = loc.vx_coverage_2024_cf_routine[location]
-    # cf_mac11_14_2024 = loc.vx_coverage_2024_cf_macs[location][0]
 
-    # Both
+    # 2024 routine
+    sq_routine_2024 = loc.vx_coverage_2024_routine[location]
+    cf_routine_2024 = loc.vx_coverage_2024_cf_routine[location]
+
+    # MACs in both years
     sq_mac11_14_both = loc.vx_coverage_both_macs[location][0]
     sq_mac15_16_both = loc.vx_coverage_both_macs[location][1]
     cf_mac11_14_both = loc.vx_coverage_both_cf_macs[location][0]
 
-    # # 2023 only - status quo
+    # 2023 routine - status quo
     routine_single_vx_23 = hpv.campaign_vx(
         prob=sq_routine_2023,
         years=year,
@@ -139,28 +133,8 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Single dose routine 2023'
     )
-    # mac11_single_vx_23 = hpv.campaign_vx(
-    #     prob=sq_mac11_14_2023,
-    #     years=year,
-    #     product=singledose,
-    #     age_range=mac11_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Single dose MAC 11-14'
-    # )
-    # mac15_single_vx_23 = hpv.campaign_vx(
-    #     prob=sq_mac15_16_2023,
-    #     years=year,
-    #     product=singledose,
-    #     age_range=mac15_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Single dose MAC 15-16'
-    # )
-    #
-    # vx_scenarios['Single dose 2023'] = [routine_single_vx_23, mac11_single_vx_23, mac15_single_vx_23]
-    #
-    # # 2023 counterfactual
+
+    # 2023 routine - counterfactual
     routine_single_vx_cf_23 = hpv.campaign_vx(
         prob=cf_routine_2023,
         years=year,
@@ -170,19 +144,8 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Double dose routine 2023'
     )
-    # mac11_single_vx_cf_23 = hpv.campaign_vx(
-    #     prob=cf_mac11_14_2023,
-    #     years=year,
-    #     product=singledose,
-    #     age_range=mac11_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Double dose MAC 11-14'
-    # )
-    #
-    # vx_scenarios['Double dose 2023'] = [routine_single_vx_cf_23, mac11_single_vx_cf_23]
-    #
-    # # 2024 only - status quo
+
+    # 2024 routine - status quo
     routine_single_vx_24 = hpv.campaign_vx(
         prob=sq_routine_2024,
         years=year+1,
@@ -192,28 +155,8 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Single dose routine 2024'
     )
-    # mac11_single_vx_24 = hpv.campaign_vx(
-    #     prob=sq_mac11_14_2024,
-    #     years=year+1,
-    #     product=singledose,
-    #     age_range=mac11_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Single dose MAC 11-14 2024'
-    # )
-    # mac15_single_vx_24 = hpv.campaign_vx(
-    #     prob=sq_mac15_16_2024,
-    #     years=year,
-    #     product=singledose,
-    #     age_range=mac15_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Single dose MAC 15-16 2024'
-    # )
-    #
-    # vx_scenarios['Single dose 2024'] = [routine_single_vx_24, mac11_single_vx_24, mac15_single_vx_24]
-    #
-    # # 2024 counterfactual
+
+    # 2024 routine - counterfactual
     routine_single_vx_cf_24 = hpv.campaign_vx(
         prob=cf_routine_2024,
         years=year+1,
@@ -223,19 +166,8 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         interpolate=False,
         label='Double dose routine 2024'
     )
-    # mac11_single_vx_cf_24 = hpv.campaign_vx(
-    #     prob=cf_mac11_14_2024,
-    #     years=year+1,
-    #     product=singledose,
-    #     age_range=mac11_age,
-    #     eligibility=eligibility,
-    #     interpolate=False,
-    #     label='Double dose MAC 11-14 2024'
-    # )
-    #
-    # vx_scenarios['Double dose 2024'] = [routine_single_vx_cf_24, mac11_single_vx_cf_24]
 
-    # BOTH - status quo
+    # MACs in both years - status quo
     mac11_single_vx = hpv.campaign_vx(
         prob=sq_mac11_14_both,
         years=year,
@@ -305,8 +237,8 @@ if __name__ == '__main__':
 
     T = sc.timer()
     do_run = True
-    do_process = False
-    do_compile = False
+    do_process = True
+    do_compile = True
     end = 2100
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
@@ -357,14 +289,14 @@ if __name__ == '__main__':
 
                     msim_dict[scen_label] = mres
 
-                sc.saveobj(f'results/{fnlocation}_vx_scens_split.obj', msim_dict)
+                sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
 
     if do_compile:
         dfs = []
         for location in loc.locations:
             dd = dict()
             fnlocation = location.replace(' ', '_')
-            msim_dict = sc.loadobj(f'raw_results_2023/{fnlocation}_vx_scens_split.obj')
+            msim_dict = sc.loadobj(f'raw_results/{fnlocation}_vx_scens.obj')
 
             # # Process diffs
             # diffs = msim_dict['Double dose']['raw_cohort_cancers'] - msim_dict['Single dose']['raw_cohort_cancers']
@@ -379,6 +311,6 @@ if __name__ == '__main__':
                 dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
             dfs += [pd.DataFrame(dd, index=[0])]
         ddf = pd.concat(dfs)
-        ddf.to_csv('results_split.csv')
+        ddf.to_csv('results.csv')
 
     print('Done.')
