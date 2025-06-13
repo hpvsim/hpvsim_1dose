@@ -32,7 +32,10 @@ def rev_map_sb_loc(location):
     return location
 
 
-def make_sb_data(location=None, dist_type='lognormal', debut_bias=[0,0]):
+def make_sb_data(location=None, dist_type='lognormal', debut_bias=None):
+
+    if debut_bias is None:
+        debut_bias = [0,0]
 
     # Deal with missing countries and different spelling conventions
     if location in loc.nosbdata_locations:
