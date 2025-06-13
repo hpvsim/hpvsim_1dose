@@ -33,7 +33,11 @@ default_layer_probs = dict(
     ),
 )
 
-def make_layer_probs(location=None, marriage_scale=1, fitto='dhs'):
+def make_layer_probs(location=None, marriage_scale=None, fitto='dhs'):
+
+    if marriage_scale is None:
+        marriage_scale = 1.0
+
     # Deal with missing countries and different spelling conventions
     if location in loc.nosbdata_locations:
         sb_location = 'Ethiopia' # Use assumptions for Ethiopia for CDI
