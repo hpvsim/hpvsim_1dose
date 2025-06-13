@@ -48,6 +48,7 @@ vx_coverage_2023_routine = {
     'zambia':       1.00
 }
 
+# NOT USED
 vx_coverage_2023_macs = {
     # Country       11-14, 15-16
     'bangladesh':   [0.28, 0.00],
@@ -175,6 +176,7 @@ vx_coverage_2024_cf_routine = {
     'zambia':       0.66
 }
 
+# NOT USED
 vx_coverage_2024_cf_macs = {
     # Country       11-14, 15-16
     'bangladesh':   [0.19, 0.00],

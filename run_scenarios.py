@@ -205,13 +205,13 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
 def make_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100):
     """ Set up scenarios """
 
-    st_intv = make_st()
+    # st_intv = make_st()
 
     all_msims = sc.autolist()
     for name, vx_intv in vx_scenarios.items():
         sims = sc.autolist()
         for seed in range(n_seeds):
-            interventions = vx_intv + st_intv
+            interventions = vx_intv #+ st_intv
             sim = rs.make_sim(location=location, calib_pars=calib_pars, debug=debug, interventions=interventions, end=end, seed=seed)
             sim.label = name
             sims += sim
@@ -233,7 +233,7 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = False
+    do_run = True
     do_process = True
     do_compile = True
     end = 2100
