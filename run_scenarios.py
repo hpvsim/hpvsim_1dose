@@ -91,7 +91,7 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     return st_intvs
 
 
-def make_vx_scenarios(location=None, product='bivalent', year=2023):
+def make_vx_scenarios(location=None, product='bivalent', year=2024):
 
     routine_age = (9, 16)
 
@@ -182,7 +182,7 @@ if __name__ == '__main__':
             if 'hiv_pars' in calib_pars:
                 # Remove hiv_pars if it exists, as we are not running HIV simulations here
                 calib_pars.pop('hiv_pars', None)
-            vx_scenarios = make_vx_scenarios(location=location, year=2023)
+            vx_scenarios = make_vx_scenarios(location=location, year=2024)
 
             if serial:
                 msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
