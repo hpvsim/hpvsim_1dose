@@ -91,7 +91,7 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     return st_intvs
 
 
-def make_vx_scenarios(location=None, product=None, year=2024):
+def make_vx_scenarios(location=None, year=2024):
 
     routine_age = (9, 16)
 
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     do_run = True
     do_process = True
     do_compile = True
-    end = 2100
+    end = 2125
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
@@ -233,7 +233,7 @@ if __name__ == '__main__':
 
                 sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
 
-    which = 'indirect'
+    which = 'direct'
     if do_compile:
 
         dfs = []
