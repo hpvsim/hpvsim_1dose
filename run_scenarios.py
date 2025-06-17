@@ -93,7 +93,7 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
 
 def make_vx_scenarios(location=None, product='bivalent', year=2023):
 
-    routine_age = (9, 17)
+    routine_age = (9, 16)
 
     vx_scenarios = dict()
 
@@ -114,6 +114,7 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         prob=actual_coverage,
         years=year,
         product=singledose,
+        sex=0,
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
@@ -124,6 +125,7 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
         prob=cf_coverage,
         years=year,
         product=singledose,
+        sex=0,
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
