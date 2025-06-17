@@ -93,9 +93,7 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
 
 def make_vx_scenarios(location=None, product='bivalent', year=2023):
 
-    routine_age = (9, 10)
-    mac11_age = (10, 15)
-    mac15_age = (15, 17)
+    routine_age = (9, 17)
 
     vx_scenarios = dict()
 
@@ -107,97 +105,33 @@ def make_vx_scenarios(location=None, product='bivalent', year=2023):
     singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
     eligibility = lambda sim: (sim.people.doses == 0)
 
-    # 2023 routine
-    sq_routine_2023 = loc.vx_coverage_2023_routine[location]
-    cf_routine_2023 = loc.vx_coverage_2023_cf_routine[location]
+    # Coverage levels
+    actual_coverage = loc.vx_coverage_actual[location]
+    cf_coverage = loc.vx_coverage_cf[location]
 
-    # 2024 routine
-    sq_routine_2024 = loc.vx_coverage_2024_routine[location]
-    cf_routine_2024 = loc.vx_coverage_2024_cf_routine[location]
-
-    # MACs in both years
-    sq_mac11_14_both = loc.vx_coverage_both_macs[location][0]
-    sq_mac15_16_both = loc.vx_coverage_both_macs[location][1]
-    cf_mac11_14_both = loc.vx_coverage_both_cf_macs[location][0]
-
-    # 2023 routine - status quo
-    routine_single_vx_23 = hpv.campaign_vx(
-        prob=sq_routine_2023,
+    # Interventions
+    actual = hpv.campaign_vx(
+        prob=actual_coverage,
         years=year,
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
-        label='Single dose routine 2023'
+        label='Single dose'
     )
 
-    # 2023 routine - counterfactual
-    routine_single_vx_cf_23 = hpv.campaign_vx(
-        prob=cf_routine_2023,
+    cf = hpv.campaign_vx(
+        prob=cf_coverage,
         years=year,
         product=singledose,
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
-        label='Double dose routine 2023'
+        label='Double dose'
     )
 
-    # 2024 routine - status quo
-    routine_single_vx_24 = hpv.campaign_vx(
-        prob=sq_routine_2024,
-        years=year+1,
-        product=singledose,
-        age_range=routine_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose routine 2024'
-    )
-
-    # 2024 routine - counterfactual
-    routine_single_vx_cf_24 = hpv.campaign_vx(
-        prob=cf_routine_2024,
-        years=year+1,
-        product=singledose,
-        age_range=routine_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Double dose routine 2024'
-    )
-
-    # MACs in both years - status quo
-    mac11_single_vx = hpv.campaign_vx(
-        prob=sq_mac11_14_both,
-        years=year,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 11-14'
-    )
-    mac15_single_vx = hpv.campaign_vx(
-        prob=sq_mac15_16_both,
-        years=year,
-        product=singledose,
-        age_range=mac15_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Single dose MAC 15-16'
-    )
-
-    vx_scenarios['Single dose'] = [routine_single_vx_23, routine_single_vx_24, mac11_single_vx, mac15_single_vx]
-
-    # Both counterfactual
-    mac11_single_vx_cf = hpv.campaign_vx(
-        prob=cf_mac11_14_both,
-        years=year,
-        product=singledose,
-        age_range=mac11_age,
-        eligibility=eligibility,
-        interpolate=False,
-        label='Double dose MAC 11-14'
-    )
-
-    vx_scenarios['Double dose'] = [routine_single_vx_cf_23, routine_single_vx_cf_24, mac11_single_vx_cf]
+    vx_scenarios['Single dose'] = [actual]
+    vx_scenarios['Double dose'] = [cf]
 
     return vx_scenarios
 
