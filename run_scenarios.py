@@ -118,6 +118,7 @@ def make_vx_scenarios(location=None, product='bivalent', year=2024):
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
+        annual_prob=False,
         label='Single dose'
     )
 
@@ -129,6 +130,7 @@ def make_vx_scenarios(location=None, product='bivalent', year=2024):
         age_range=routine_age,
         eligibility=eligibility,
         interpolate=False,
+        annual_prob=False,
         label='Double dose'
     )
 
