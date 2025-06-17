@@ -228,7 +228,9 @@ if __name__ == '__main__':
 
                 sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
 
+    which = 'indirect'
     if do_compile:
+
         dfs = []
         for location in loc.locations:
             dd = dict()
@@ -243,11 +245,17 @@ if __name__ == '__main__':
 
             dd['location'] = location
             for scen in msim_dict.keys():
-                dd[scen] = msim_dict[scen]['cohort_cancers']
-                dd[scen+' - lb'] = msim_dict[scen]['cohort_cancers_low']
-                dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
+                if which == 'direct':
+                    dd[scen] = msim_dict[scen]['cohort_cancers']
+                    dd[scen+' - lb'] = msim_dict[scen]['cohort_cancers_low']
+                    dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
+                elif which == 'indirect':
+                    dd[scen] = msim_dict[scen]['cancers'].values[65:].sum()
+                    dd[scen+' - lb'] = msim_dict[scen]['cancers'].low[65:].sum()
+                    dd[scen+' - ub'] = msim_dict[scen]['cancers'].high[65:].sum()
+
             dfs += [pd.DataFrame(dd, index=[0])]
         ddf = pd.concat(dfs)
-        ddf.to_csv('results.csv')
+        ddf.to_csv(f'results_{which}.csv')
 
     print('Done.')

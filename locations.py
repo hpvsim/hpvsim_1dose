@@ -31,7 +31,7 @@ vx_coverage_actual = {
     # Country
     'bangladesh':   0.69,
     'burkina faso': 0.42,
-    'cambodia':     0.00,
+    'cambodia':     0.33,
     'cameroon':     0.14,
     'cote divoire': 0.21,
     'ethiopia':     0.90,
