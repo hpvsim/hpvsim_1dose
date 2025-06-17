@@ -91,7 +91,7 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     return st_intvs
 
 
-def make_vx_scenarios(location=None, product='bivalent', year=2024):
+def make_vx_scenarios(location=None, product=None, year=2024):
 
     routine_age = (9, 16)
 
@@ -101,8 +101,13 @@ def make_vx_scenarios(location=None, product='bivalent', year=2024):
     vx_scenarios['Baseline'] = []
 
     # Single dose
+    if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe']:
+        # For these countries, we use the single dose product
+        product = 'bivalent'
+    else:
+        product = 'nonavalent'
     singledose = hpv.default_vx(prod_name=product)
-    singledose.imm_init = dict(dist='beta_mean', par1=0.97, par2=0.025)
+    singledose.imm_init = dict(dist='uniform', par1=0.98, par2=0.99)
     eligibility = lambda sim: (sim.people.doses == 0)
 
     # Coverage levels
