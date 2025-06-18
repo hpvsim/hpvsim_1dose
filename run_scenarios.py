@@ -26,7 +26,7 @@ import locations as loc
 
 # Settings - used here and imported elsewhere
 debug = 0
-n_seeds = [20, 1][debug]  # How many seeds to run per cluster
+n_seeds = [1, 1][debug]  # How many seeds to run per cluster
 serial = False
 if serial: n_seeds = 1
 
@@ -93,7 +93,12 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
 
 def make_vx_scenarios(location=None, year=2024):
 
-    routine_age = (9, 16)
+    if location in ['ethiopia', 'laos', 'zambia']:
+        routine_age = (9, 16)
+    elif location in ['togo']:
+        routine_age = (9, 15)
+    else:
+        routine_age = (9, 14)
 
     vx_scenarios = dict()
 

@@ -181,7 +181,7 @@ if __name__ == '__main__':
     # run_popsims(end=2023, verbose=0.1)
 
 
-    for location in ['myanmar']:  #loc.locations:
+    for location in ['nigeria']:  #loc.locations:
         # sim = make_sim(location=location, end=2025)
         sim = run_sim(location=location, end=2025)
         # msim = run_parsets(location=location)
