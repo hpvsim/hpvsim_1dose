@@ -26,7 +26,7 @@ import locations as loc
 
 # Settings - used here and imported elsewhere
 debug = 0
-n_seeds = [1, 1][debug]  # How many seeds to run per cluster
+n_seeds = [20, 1][debug]  # How many seeds to run per cluster
 serial = False
 if serial: n_seeds = 1
 
