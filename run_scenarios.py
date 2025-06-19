@@ -181,8 +181,8 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = False
-    do_process = False
+    do_run = True
+    do_process = True
     do_compile = True
     end = 2125
 
@@ -228,13 +228,6 @@ if __name__ == '__main__':
                     mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_low
                     mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_high
                     mres['raw_cohort_cancers'] = reduced_analyzer.raw
-
-                    # for ii, intv in enumerate(reduced_sim['interventions']):
-                    #     intv_label = intv.label
-                    #     mres[intv_label] = reduced_sim['interventions'][ii].n_products_used
-                    #     if scen_label == 'Double dose':
-                    #         mres[intv_label] = reduced_sim['interventions'][ii].n_products_used[:] * 2
-
                     msim_dict[scen_label] = mres
 
                 sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
