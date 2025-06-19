@@ -103,7 +103,7 @@ def make_vx_scenarios(location=None, year=2024):
     vx_scenarios = dict()
 
     # Baseline
-    vx_scenarios['Baseline'] = []
+    vx_scenarios['No vaccination'] = []
 
     # Single dose
     if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe']:
@@ -188,6 +188,7 @@ if __name__ == '__main__':
 
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
+
         for location in loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
@@ -246,12 +247,6 @@ if __name__ == '__main__':
             dd = dict()
             fnlocation = location.replace(' ', '_')
             msim_dict = sc.loadobj(f'results/{fnlocation}_vx_scens.obj')
-
-            # # Process diffs
-            # diffs = msim_dict['Double dose']['raw_cohort_cancers'] - msim_dict['Single dose']['raw_cohort_cancers']
-            # diffs_med = np.median(diffs, axis=1).sum()
-            # diffs_lb = np.quantile(diffs, q=0.05, axis=1).sum()
-            # diffs_ub = np.quantile(diffs, q=0.95, axis=1).sum()
 
             dd['location'] = location
             for scen in msim_dict.keys():

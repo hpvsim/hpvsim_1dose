@@ -77,7 +77,7 @@ def make_sim(location=None, calib=False, calib_pars=None, debug=0, marriage_scal
 
 # %% Simulation running functions
 def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, verbose=0.2,
-        marriage_scale=None, debut_bias=None, do_save=True, calib_pars=None, end=2100):
+        marriage_scale=None, debut_bias=None, do_save=True, calib_pars=None, end=2100, do_shrink=True):
 
     dflocation = location.replace(' ', '_')
     if calib_pars is None:
@@ -103,7 +103,7 @@ def run_sim(location=None, interventions=None, analyzers=None, debug=0, seed=1, 
     # Run
     sim['verbose'] = verbose
     sim.run()
-    sim.shrink()
+    if do_shrink: sim.shrink()
 
     if do_save:
         sim.save(f'results/{dflocation}.sim')
@@ -180,10 +180,9 @@ if __name__ == '__main__':
 
     # run_popsims(end=2023, verbose=0.1)
 
-
     for location in ['nigeria']:  #loc.locations:
         # sim = make_sim(location=location, end=2025)
-        sim = run_sim(location=location, end=2025)
+        sim = run_sim(location=location, end=2025, do_shrink=False)
         # msim = run_parsets(location=location)
 
 

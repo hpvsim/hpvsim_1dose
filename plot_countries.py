@@ -1,5 +1,5 @@
 """
-Plot 1 for infant vaccination scenarios
+Plot time series of cancers in vaccination cohort
 """
 
 
@@ -8,7 +8,8 @@ import sciris as sc
 import locations
 import utils as ut
 import numpy as np
-
+import locations as loc
+ 
 
 def plot_single(ax, mres, to_plot, si, ei, color, label=None, smooth=True):
 
@@ -28,15 +29,7 @@ def plot_single(ax, mres, to_plot, si, ei, color, label=None, smooth=True):
     return ax
 
 
-def plot_doses(ax, mres, si, ei, color, label=None):
-
-    years = mres.year[si:ei]
-    doses = mres['Routine vx'][si:ei]
-    ax.plot(years, doses, color=color, label=label)
-    return ax
-
-
-def plot_fig1(locations):
+def plot_cohort_ts():
 
     ut.set_font(22)
     n_plots = len(locations)
@@ -60,11 +53,7 @@ def plot_fig1(locations):
 
         cn = 0
         for slabel, mres in msim_dict.items():
-            if resname == 'doses':
-                if slabel != 'Baseline':
-                    ax = plot_doses(ax, mres, si, ei, color=colors[cn], label=slabel)
-            else:
-                ax = plot_single(ax, mres, resname, si, ei, color=colors[cn], label=slabel)
+            ax = plot_single(ax, mres, resname, si, ei, color=colors[cn], label=slabel)
             cn += 1
 
         ax.set_ylim(bottom=0)  #, top=23)
@@ -83,10 +72,4 @@ def plot_fig1(locations):
 # %% Run as a script
 if __name__ == '__main__':
 
-    # Load scenarios and construct figure
-    locations = locations.locations
-    plot_fig1(locations)
-
-
-
-
+    plot_cohort_ts()

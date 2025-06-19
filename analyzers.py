@@ -15,7 +15,7 @@ class cohort_cancers(hpv.Analyzer):
         self.start = start or 2024
         self.cohort_age = cohort_age or [9, 16]
         self.years = None
-
+        self.results = None
         return
 
     def initialize(self, sim):
