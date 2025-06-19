@@ -18,9 +18,9 @@ import utils as ut
 #%% Plotting functions
 def plot_figS1(locations, filestem='', n_results=50):
 
-    ut.set_font(12)
+    ut.set_font(16)
     n_plots = len(locations)
-    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(25,12))
+    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12,10))
     axes = axes.flatten()
     resname = 'cancers'
     plot_count = 0
@@ -64,17 +64,16 @@ def plot_figS1(locations, filestem='', n_results=50):
         ax.set_title(title_country)
         ax.set_ylabel('')
         ax.set_xlabel('')
-        if pn in [0, 5, 10, 15, 20, 25]:
+        # Turn legend off
+        ax.legend().remove()
+        if pn in [0, 4, 8, 12, 16]:
             ax.set_ylabel('# cancers')
-        if pn in [25, 26, 27, 28, 29]:
-            stride = np.arange(0, len(baseres['bins']), 2)
-            ax.set_xticks(x[stride], baseres['bins'].astype(int)[stride])
-        else:
-            ax.set_xticks(x, [])
+        stride = np.arange(0, len(baseres['bins']), 2)
+        ax.set_xticks(x[stride], baseres['bins'].astype(int)[stride])
         plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/figS1.png", dpi=100)
+    pl.savefig(f"figures/figS4_calib.png", dpi=100)
 
 
 #%% Run as a script

@@ -23,8 +23,8 @@ import locations as loc
 
 # CONFIGURATIONS TO BE SET BY USERS BEFORE RUNNING
 to_run = [
-    'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
-    # 'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
+    # 'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
+    'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
 ]
 debug = False  # If True, this will do smaller runs that can be run locally for debugging
 do_save = True
@@ -33,8 +33,8 @@ locations = loc.locations
 # Run settings for calibration (dependent on debug)
 n_trials = [1000, 1][debug]  # How many trials to run for calibration
 n_workers = [40, 1][debug]  # How many cores to use
-storage = ["mysql://hpvsim_user@localhost/hpvsim_db", None][debug]  # Storage for calibrations
-
+# storage = ["mysql://hpvsim_user@localhost/hpvsim_db", None][debug]  # Storage for calibrations
+storage = None
 
 ########################################################################
 # Run calibration
@@ -131,13 +131,13 @@ if __name__ == '__main__':
 
     # Run calibration
     if 'run_calibration' in to_run:
-        for location in locations:
+        for location in loc.locations:
             sim, calib = run_calib(location=location, n_trials=n_trials, n_workers=n_workers,
                                    do_save=do_save, do_plot=False, filestem=filestem)
 
     # Load the calibration, plot it, and save the best parameters -- usually locally
     if 'plot_calibration' in to_run:
-        for location in locations:
+        for location in loc.locations:
             calib = load_calib(location=location, do_plot=True, save_pars=True, filestem=filestem)
 
     T.toc('Done')

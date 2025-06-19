@@ -6,192 +6,151 @@ Locations
 locations = [
     'bangladesh',       # 0
     'burkina faso',     # 1
-    'cameroon',         # 2
-    'cote divoire',     # 3
-    'ethiopia',         # 4
-    'mali',             # 6
-    'mozambique',       # 7
-    'myanmar',          # 8
-    'nigeria',          # 9
-    'sierra leone',     # 10
-    'tanzania',         # 11
-    'togo',             # 12
-    'zambia',           # 14
+    'cambodia',         # 2
+    'cameroon',         # 3
+    'cote divoire',     # 4
+    'ethiopia',         # 5
+    'gambia',           # 6
+    'laos',             # 7
+    'mali',             # 8
+    'mozambique',       # 9
+    'myanmar',          # 10
+    'nepal',            # 11
+    'nigeria',          # 12
+    'sierra leone',     # 13
+    'tanzania',         # 14
+    'togo',             # 15
+    'zambia',           # 16
 ]
 
-nosbdata_locations = ["cote d'ivoire", "cote divoire"]
+location_labels = {
+    'bangladesh':   'Bangladesh',
+    'burkina faso': 'Burkina Faso',
+    'cambodia':     'Cambodia',
+    'cameroon':     'Cameroon',
+    'cote divoire': 'Côte d\'Ivoire',
+    'ethiopia':     'Ethiopia',
+    'gambia':       'Gambia',
+    'laos':         'Lao PDR',
+    'mali':         'Mali',
+    'mozambique':   'Mozambique',
+    'myanmar':      'Myanmar',
+    'nepal':        'Nepal',
+    'nigeria':      'Nigeria',
+    'sierra leone': 'Sierra Leone',
+    'tanzania':     'Tanzania',
+    'togo':         'Togo',
+    'zambia':       'Zambia',
+}
+
+nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
-vx_coverage_2023_routine = {
+vx_coverage_actual = {
     # Country
-    'bangladesh':   1.00,
-    'burkina faso': 1.00,
-    'cameroon':     0.56,
-    'cote divoire': 0.75,
-    'ethiopia':     0.30,
-    'mali':         0.00,
-    'mozambique':   0.22,
-    'myanmar':      1.00,
-    'nigeria':      1.00,
-    'sierra leone': 0.38,
-    'tanzania':     0.35,
-    'togo':         1.00,
-    'zambia':       1.00
-}
-
-vx_coverage_2023_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.31, 0.00],
-    'burkina faso': [0.30, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [0.00, 0.00],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.00, 0.00],
-    'myanmar':      [0.07, 0.00],
-    'nigeria':      [0.28, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.00, 0.00],
-    'togo':         [1.00, 0.36],
-    'zambia':       [1.00, 0.28],
-}
-
-vx_coverage_2023_cf_routine = {
-    # Country
-    'bangladesh':   1.00,
-    'burkina faso': 1.00,
-    'cameroon':     0.28,
-    'cote divoire': 0.37,
-    'ethiopia':     0.30,
-    'mali':         0.00,
-    'mozambique':   0.22,
-    'myanmar':      0.68,
-    'nigeria':      1.00,
-    'sierra leone': 0.38,
-    'tanzania':     0.35,
-    'togo':         1.00,
-    'zambia':       1.00
-}
-
-vx_coverage_2023_cf_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.03, 0.00],
-    'burkina faso': [0.01, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [0.00, 0.00],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.00, 0.00],
-    'myanmar':      [0.00, 0.00],
-    'nigeria':      [0.01, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.00, 0.00],
-    'togo':         [0.46, 0.00],
-    'zambia':       [0.44, 0.00],
+    'bangladesh':   0.93,
+    'burkina faso': 0.55,
+    'cambodia':     0.44,
+    'cameroon':     0.19,
+    'cote divoire': 0.27,
+    'ethiopia':     0.90,
+    'gambia':       0.56,
+    'laos':         0.98,
+    'mali':         0.14,
+    'mozambique':   0.47,
+    'myanmar':      0.47,
+    'nepal':        0.99,
+    'nigeria':      0.87,
+    'sierra leone': 0.20,
+    'tanzania':     0.90,
+    'togo':         0.94,
+    'zambia':       0.89
 }
 
 ######################
-vx_coverage_2024_routine = {
+vx_coverage_cf = {
     # Country
-    'bangladesh':   1.00,
-    'burkina faso': 0.83,
-    'cameroon':     0.48,
-    'cote divoire': 0.82,
-    'ethiopia':     1.00,
-    'mali':         0.78,
-    'mozambique':   1.00,
-    'myanmar':      1.00,
-    'nigeria':      1.00,
-    'sierra leone': 0.69,
-    'tanzania':     1.00,
-    'togo':         1.00,
-    'zambia':       1.00
-}
-
-vx_coverage_2024_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.68, 0.00],
-    'burkina faso': [0.00, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [1.00, 0.91],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.38, 0.00],
-    'myanmar':      [0.06, 0.00],
-    'nigeria':      [0.51, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.93, 0.00],
-    'togo':         [0.02, 0.00],
-    'zambia':       [0.07, 0.00],
-}
-
-vx_coverage_2024_cf_routine = {
-    # Country
-    'bangladesh':   1.00,
-    'burkina faso': 0.41,
-    'cameroon':     0.24,
-    'cote divoire': 0.41,
-    'ethiopia':     1.00,
-    'mali':         0.39,
-    'mozambique':   1.00,
-    'myanmar':      0.63,
-    'nigeria':      1.00,
-    'sierra leone': 0.35,
-    'tanzania':     1.00,
-    'togo':         0.54,
-    'zambia':       0.64
-}
-
-vx_coverage_2024_cf_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.21, 0.00],
-    'burkina faso': [0.00, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [0.59, 0.00],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.06, 0.00],
-    'myanmar':      [0.00, 0.00],
-    'nigeria':      [0.13, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.32, 0.00],
-    'togo':         [0.00, 0.00],
-    'zambia':       [0.00, 0.00],
+    'bangladesh':   0.34,
+    'burkina faso': 0.21,
+    'cambodia':     0.17,
+    'cameroon':     0.07,
+    'cote divoire': 0.10,
+    'ethiopia':     0.47,
+    'gambia':       0.22,
+    'laos':         0.52,
+    'mali':         0.05,
+    'mozambique':   0.19,
+    'myanmar':      0.18,
+    'nepal':        0.37,
+    'nigeria':      0.33,
+    'sierra leone': 0.10,
+    'tanzania':     0.37,
+    'togo':         0.42,
+    'zambia':       0.45
 }
 
 ######################
-
-vx_coverage_both_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.99, 0.00],
-    'burkina faso': [0.30, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [1.00, 0.91],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.38, 0.00],
-    'myanmar':      [0.13, 0.00],
-    'nigeria':      [0.79, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.93, 0.00],
-    'togo':         [1.00, 0.40],
-    'zambia':       [1.00, 0.44],
+vx_coverage_optim = {
+    # Country
+    'bangladesh':   0.34,
+    'burkina faso': 0.21,
+    'cambodia':     0.17,
+    'cameroon':     0.07,
+    'cote divoire': 0.10,
+    'ethiopia':     0.47,
+    'gambia':       0.22,
+    'laos':         0.52,
+    'mali':         0.05,
+    'mozambique':   0.19,
+    'myanmar':      0.18,
+    'nepal':        0.37,
+    'nigeria':      0.33,
+    'sierra leone': 0.10,
+    'tanzania':     0.37,
+    'togo':         0.42,
+    'zambia':       0.45
 }
 
-vx_coverage_both_cf_macs = {
-    # Country       11-14, 15-16
-    'bangladesh':   [0.24, 0.00],
-    'burkina faso': [0.01, 0.00],
-    'cameroon':     [0.00, 0.00],
-    'cote divoire': [0.00, 0.00],
-    'ethiopia':     [0.59, 0.00],
-    'mali':         [0.00, 0.00],
-    'mozambique':   [0.06, 0.00],
-    'myanmar':      [0.00, 0.00],
-    'nigeria':      [0.13, 0.00],
-    'sierra leone': [0.00, 0.00],
-    'tanzania':     [0.32, 0.00],
-    'togo':         [0.46, 0.00],
-    'zambia':       [0.44, 0.00],
+######################
+vx_coverage_denom = {
+    # Country       # Number of girls aged 9-16 in 2024
+    'bangladesh':   9435363,
+    'burkina faso': 1809440,
+    'cambodia':     986465,
+    'cameroon':     2091554,
+    'cote divoire': 2248973,
+    'ethiopia':     11850432,
+    'gambia':       205466,
+    'laos':         599529,
+    'mali':         1904512,
+    'mozambique':   2641889,
+    'myanmar':      2566301,
+    'nepal':        1693828,
+    'nigeria':      17312580,
+    'sierra leone': 610929,
+    'tanzania':     4876388,
+    'togo':         776290,
+    'zambia':       2094613
+}
+
+vx_coverage_extra = {
+    # Country       # Number of girls aged 9-16 in 2024
+    'bangladesh':   4408290,
+    'burkina faso': 496574.5,
+    'cambodia':     218430,
+    'cameroon':     196008.75,
+    'cote divoire': 304361,
+    'ethiopia':     5104041.25,
+    'gambia':       57674.5,
+    'laos':         272697.5,
+    'mali':         133636.5,
+    'mozambique':   569026.25,
+    'myanmar':      607905,
+    'nepal':        840759.5,
+    'nigeria':      7522955,
+    'sierra leone': 39448.75,
+    'tanzania':     2025827.5,
+    'togo':         366480,
+    'zambia':       934548.25
 }
