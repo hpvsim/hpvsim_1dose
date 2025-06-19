@@ -94,11 +94,11 @@ def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
 def make_vx_scenarios(location=None, year=2024):
 
     if location in ['ethiopia', 'laos', 'zambia']:
-        routine_age = (9, 16)
+        routine_age = (9, 17)
     elif location in ['togo']:
-        routine_age = (9, 15)
+        routine_age = (9, 16)
     else:
-        routine_age = (9, 14)
+        routine_age = (9, 15)
 
     vx_scenarios = dict()
 

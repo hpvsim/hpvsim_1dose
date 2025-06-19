@@ -49,47 +49,47 @@ cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
 vx_coverage_actual = {
     # Country
-    'bangladesh':   0.69,
-    'burkina faso': 0.42,
-    'cambodia':     0.33,
-    'cameroon':     0.14,
-    'cote divoire': 0.21,
+    'bangladesh':   0.93,
+    'burkina faso': 0.55,
+    'cambodia':     0.44,
+    'cameroon':     0.19,
+    'cote divoire': 0.27,
     'ethiopia':     0.90,
-    'gambia':       0.43,
+    'gambia':       0.56,
     'laos':         0.98,
-    'mali':         0.11,
-    'mozambique':   0.35,
-    'myanmar':      0.35,
-    'nepal':        0.73,
-    'nigeria':      0.67,
-    'sierra leone': 0.15,
-    'tanzania':     0.69,
-    'togo':         0.84,
+    'mali':         0.14,
+    'mozambique':   0.47,
+    'myanmar':      0.47,
+    'nepal':        0.99,
+    'nigeria':      0.87,
+    'sierra leone': 0.20,
+    'tanzania':     0.90,
+    'togo':         0.94,
     'zambia':       0.89
 }
-
 
 ######################
 vx_coverage_cf = {
     # Country
-    'bangladesh':   0.34,
-    'burkina faso': 0.21,
-    'cambodia':     0.17,
-    'cameroon':     0.07,
-    'cote divoire': 0.10,
+    'bangladesh':   0.47,
+    'burkina faso': 0.27,
+    'cambodia':     0.22,
+    'cameroon':     0.09,
+    'cote divoire': 0.14,
     'ethiopia':     0.47,
-    'gambia':       0.22,
+    'gambia':       0.28,
     'laos':         0.52,
-    'mali':         0.05,
-    'mozambique':   0.19,
-    'myanmar':      0.18,
-    'nepal':        0.37,
-    'nigeria':      0.33,
-    'sierra leone': 0.10,
-    'tanzania':     0.37,
-    'togo':         0.42,
+    'mali':         0.07,
+    'mozambique':   0.25,
+    'myanmar':      0.24,
+    'nepal':        0.50,
+    'nigeria':      0.43,
+    'sierra leone': 0.13,
+    'tanzania':     0.48,
+    'togo':         0.47,
     'zambia':       0.45
 }
+
 
 ######################
 vx_coverage_denom = {
