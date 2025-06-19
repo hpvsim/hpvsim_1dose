@@ -71,25 +71,46 @@ vx_coverage_actual = {
 ######################
 vx_coverage_cf = {
     # Country
-    'bangladesh':   0.47,
-    'burkina faso': 0.27,
-    'cambodia':     0.22,
-    'cameroon':     0.09,
-    'cote divoire': 0.14,
+    'bangladesh':   0.34,
+    'burkina faso': 0.21,
+    'cambodia':     0.17,
+    'cameroon':     0.07,
+    'cote divoire': 0.10,
     'ethiopia':     0.47,
-    'gambia':       0.28,
+    'gambia':       0.22,
     'laos':         0.52,
-    'mali':         0.07,
-    'mozambique':   0.25,
-    'myanmar':      0.24,
-    'nepal':        0.50,
-    'nigeria':      0.43,
-    'sierra leone': 0.13,
-    'tanzania':     0.48,
-    'togo':         0.47,
+    'mali':         0.05,
+    'mozambique':   0.19,
+    'myanmar':      0.18,
+    'nepal':        0.37,
+    'nigeria':      0.33,
+    'sierra leone': 0.10,
+    'tanzania':     0.37,
+    'togo':         0.42,
     'zambia':       0.45
 }
 
+######################
+vx_coverage_optim = {
+    # Country
+    'bangladesh':   0.34,
+    'burkina faso': 0.21,
+    'cambodia':     0.17,
+    'cameroon':     0.07,
+    'cote divoire': 0.10,
+    'ethiopia':     0.47,
+    'gambia':       0.22,
+    'laos':         0.52,
+    'mali':         0.05,
+    'mozambique':   0.19,
+    'myanmar':      0.18,
+    'nepal':        0.37,
+    'nigeria':      0.33,
+    'sierra leone': 0.10,
+    'tanzania':     0.37,
+    'togo':         0.42,
+    'zambia':       0.45
+}
 
 ######################
 vx_coverage_denom = {

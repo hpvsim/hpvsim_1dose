@@ -181,8 +181,8 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = True
-    do_process = True
+    do_run = False
+    do_process = False
     do_compile = True
     end = 2125
 
