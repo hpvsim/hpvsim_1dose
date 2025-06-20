@@ -41,7 +41,7 @@ if __name__ == '__main__':
     do_process = True
     if do_process:
 
-        scennames = ['Baseline', 'Double dose', 'Single dose']
+        scennames = ['No vaccination', 'Double dose', 'Single dose']
         results = {k: np.zeros((102, 20)) for k in scennames}  # 102 years, 20 scenarios
         locations = loc.locations
         for location in locations:
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         for sn, scen in enumerate(res_stats.keys()):
             if scen != 'year':
                 res = res_stats[scen]
-                if scen == 'Baseline':
+                if scen == 'No vaccination':
                     label = 'No vaccination'
                 elif scen == 'Double dose':
                     label = 'Counterfactual allocation'
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         ax = axes[1]
         ax = plot_single(ax, diffs, year, colors[3], smooth=False)
         ax.set_title('(B) Cumulative cervical cancers averted by single-dose in 2023/24 vaccination cohort')
-        ax.set_ylim(bottom=0, top=400e3)
+        ax.set_ylim(bottom=0, top=500e3)
         sc.SIticks(ax)
 
         fig.tight_layout()

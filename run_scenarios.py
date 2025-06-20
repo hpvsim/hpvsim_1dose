@@ -228,13 +228,6 @@ if __name__ == '__main__':
                     mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_low
                     mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_high
                     mres['raw_cohort_cancers'] = reduced_analyzer.raw
-
-                    # for ii, intv in enumerate(reduced_sim['interventions']):
-                    #     intv_label = intv.label
-                    #     mres[intv_label] = reduced_sim['interventions'][ii].n_products_used
-                    #     if scen_label == 'Double dose':
-                    #         mres[intv_label] = reduced_sim['interventions'][ii].n_products_used[:] * 2
-
                     msim_dict[scen_label] = mres
 
                 sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
