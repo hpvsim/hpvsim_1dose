@@ -41,7 +41,7 @@ if __name__ == '__main__':
     do_process = True
     if do_process:
 
-        scennames = ['Baseline', 'Double dose', 'Single dose']
+        scennames = ['No vaccination', 'Double dose', 'Single dose']
         results = {k: np.zeros((102, 20)) for k in scennames}  # 102 years, 20 scenarios
         locations = loc.locations
         for location in locations:
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         for sn, scen in enumerate(res_stats.keys()):
             if scen != 'year':
                 res = res_stats[scen]
-                if scen == 'Baseline':
+                if scen == 'No vaccination':
                     label = 'No vaccination'
                 elif scen == 'Double dose':
                     label = 'Counterfactual allocation'
