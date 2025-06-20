@@ -112,7 +112,7 @@ if __name__ == '__main__':
         ax = axes[1]
         ax = plot_single(ax, diffs, year, colors[3], smooth=False)
         ax.set_title('(B) Cumulative cervical cancers averted by single-dose in 2023/24 vaccination cohort')
-        ax.set_ylim(bottom=0, top=400e3)
+        ax.set_ylim(bottom=0, top=500e3)
         sc.SIticks(ax)
 
         fig.tight_layout()
