@@ -11,7 +11,7 @@ import utils as ut
 import numpy as np
 
 
-def plot_fig2():
+def plot_fig3():
 
     ut.set_font(24)
     fig = pl.figure(figsize=(15, 10))
@@ -54,7 +54,7 @@ def plot_fig2():
 if __name__ == '__main__':
 
     # Load scenarios and construct figure
-    plot_fig2()
+    plot_fig3()
 
 
 
