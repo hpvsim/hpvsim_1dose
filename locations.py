@@ -48,24 +48,24 @@ nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
 vx_coverage_actual = {
-    # Country
-    'bangladesh':   0.93,
-    'burkina faso': 0.55,
-    'cambodia':     0.44,
-    'cameroon':     0.19,
-    'cote divoire': 0.27,
-    'ethiopia':     0.90,
-    'gambia':       0.56,
-    'laos':         0.98,
-    'mali':         0.14,
-    'mozambique':   0.47,
-    'myanmar':      0.47,
-    'nepal':        0.99,
-    'nigeria':      0.87,
-    'sierra leone': 0.20,
-    'tanzania':     0.90,
-    'togo':         0.94,
-    'zambia':       0.89
+    # Country               WUENIC 2024
+    'bangladesh':   0.93,   # 90
+    'burkina faso': 0.55,   # 99 of 9yos
+    'cambodia':     0.44,   # 85
+    'cameroon':     0.19,   # 36
+    'cote divoire': 0.27,   # 61
+    'ethiopia':     0.90,   # 58
+    'gambia':       0.56,   # 15
+    'laos':         0.98,   # 95
+    'mali':         0.14,   # 15
+    'mozambique':   0.47,   # 89
+    'myanmar':      0.47,   # 83
+    'nepal':        0.99,   # NA
+    'nigeria':      0.87,   # 60
+    'sierra leone': 0.20,   # 61
+    'tanzania':     0.90,   # 94
+    'togo':         0.94,   # 36
+    'zambia':       0.89    # 60
 }
 
 ######################

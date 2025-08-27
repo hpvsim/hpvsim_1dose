@@ -116,9 +116,6 @@ def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, save_m
         sc.save(f'results/{location}_pars{filestem}.obj', calib_pars)
         sc.save(f'results/{location}_pars{filestem}_all.obj', trial_pars)
 
-    if save_mini:
-        cal = ut.shrink_calib(calib, n_results=100)
-        sc.saveobj(f'results/{location}_calib{filestem}_reduced.obj', cal)
 
     return calib
 

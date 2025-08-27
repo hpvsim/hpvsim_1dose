@@ -32,6 +32,7 @@ if serial: n_seeds = 1
 
 # %% Create interventions
 
+
 def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
     """ Make screening & treatment intervention """
 
