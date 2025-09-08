@@ -22,7 +22,7 @@ def plot_fig3():
     df = pd.read_csv('results_direct.csv')
 
     # Plot cumulative cases by location
-    df['Differences'] = df['Double dose'] - df['Single dose']
+    df['Differences'] = df['Double dose'] - df['Single dose actual']
     dfsorted = df.sort_values(by='Differences', ascending=False)
     xlabels = [loc.location_labels[k] for k in dfsorted['location']]
     x = np.arange(len(xlabels))

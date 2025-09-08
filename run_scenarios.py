@@ -109,7 +109,7 @@ def make_vx_scenarios(location=None, year=2024):
     vx_scenarios['No vaccination'] = []
 
     # Single dose
-    if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe']:
+    if location in ['bangladesh', 'cambodia', 'zimbabwe']:  # 'togo'
         # For these countries, we use the single dose product
         product = 'bivalent'
     else:
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
     if do_run:
 
-        for location in loc.locations:
+        for location in ['togo']:  #loc.locations:
             fnlocation = location.replace(' ', '_')
             calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
             if 'hiv_pars' in calib_pars:

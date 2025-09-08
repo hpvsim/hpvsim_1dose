@@ -175,3 +175,24 @@ vx_coverage_extra = {
     'togo':         366480,
     'zambia':       934548.25
 }
+
+vx_coverage_extra_actual = {
+    # Country       # Number of girls aged 9-16 in 2024
+    'bangladesh':   4408290,
+    'burkina faso': 496574.5,
+    'cambodia':     218430,
+    'cameroon':     196008.75,
+    'cote divoire': 304361,
+    'ethiopia':     5104041.25,
+    'gambia':       57674.5,
+    'laos':         272697.5,
+    'mali':         133636.5,
+    'mozambique':   569026.25,
+    'myanmar':      607905,
+    'nepal':        840759.5,
+    'nigeria':      7522955,
+    'sierra leone': 39448.75,
+    'tanzania':     2025827.5,
+    'togo':         366480,
+    'zambia':       934548.25
+}
