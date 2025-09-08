@@ -47,8 +47,8 @@ nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
-vx_coverage_actual = {
-    # Country               WUENIC 2024
+vx_coverage_shipped = {
+    # Country      # % of girls in largest possible cohort - see "HPVsim results" col W
     'bangladesh':   0.93,   # 90
     'burkina faso': 0.55,   # 99 of 9yos
     'cambodia':     0.44,   # 85
@@ -63,9 +63,30 @@ vx_coverage_actual = {
     'nepal':        0.99,   # NA
     'nigeria':      0.87,   # 60
     'sierra leone': 0.20,   # 61
-    'tanzania':     0.90,   # 94
+    'tanzania':     0.56,   # 94
     'togo':         0.94,   # 36
     'zambia':       0.89    # 60
+}
+
+vx_coverage_actual = {
+    # Country      # % of girls in largest possible cohort - see "HPVsim results" col AB
+    'bangladesh':   0.86,
+    'burkina faso': 0.37,
+    'cambodia':     0.33,
+    'cameroon':     0.20,
+    'cote divoire': 0.38,
+    'ethiopia':     0.54,
+    'gambia':       0.53,
+    'laos':         0.45,
+    'mali':         0.03,
+    'mozambique':   0.46,
+    'myanmar':      0.55,
+    'nepal':        0.00,
+    'nigeria':      0.79,
+    'sierra leone': 0.31,
+    'tanzania':     0.95,
+    'togo':         0.50,
+    'zambia':       0.54
 }
 
 ######################
@@ -85,7 +106,7 @@ vx_coverage_cf = {
     'nepal':        0.37,
     'nigeria':      0.33,
     'sierra leone': 0.10,
-    'tanzania':     0.37,
+    'tanzania':     0.30,
     'togo':         0.42,
     'zambia':       0.45
 }
