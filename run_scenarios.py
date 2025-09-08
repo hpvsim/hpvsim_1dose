@@ -109,7 +109,7 @@ def make_vx_scenarios(location=None, year=2024):
     vx_scenarios['No vaccination'] = []
 
     # Single dose
-    if location in ['bangladesh', 'cambodia', 'zimbabwe']:  # 'togo'
+    if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe']:
         # For these countries, we use the single dose product
         product = 'bivalent'
     else:
@@ -198,8 +198,8 @@ def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbos
 if __name__ == '__main__':
 
     T = sc.timer()
-    do_run = True
-    do_process = True
+    do_run = False
+    do_process = False
     do_compile = True
     end = 2125
 
