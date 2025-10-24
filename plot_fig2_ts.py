@@ -41,7 +41,7 @@ if __name__ == '__main__':
     do_process = True
     if do_process:
 
-        scennames = ['No vaccination', 'Double dose', 'Single dose']
+        scennames = ['No vaccination', 'Double dose', 'Single dose shipments', 'Single dose actual']
         results = {k: np.zeros((102, 20)) for k in scennames}  # 102 years, 20 scenarios
         locations = loc.locations
         for location in locations:
@@ -52,10 +52,14 @@ if __name__ == '__main__':
         results['year'] = mres_scen['year']
 
         # Process diffs
-        diffs = results['Double dose'] - results['Single dose']
+        diffs = results['Double dose'] - results['Single dose shipments']
         diffs_med = np.cumsum(np.median(diffs, axis=1))
         diffs_lb = np.cumsum(np.quantile(diffs, q=0.1, axis=1))
         diffs_ub = np.cumsum(np.quantile(diffs, q=0.9, axis=1))
+        diffs2 = results['Double dose'] - results['Single dose actual']
+        diffs2_med = np.cumsum(np.median(diffs2, axis=1))
+        diffs2_lb = np.cumsum(np.quantile(diffs2, q=0.1, axis=1))
+        diffs2_ub = np.cumsum(np.quantile(diffs2, q=0.9, axis=1))
 
         # Save results
         res_stats = sc.objdict()
@@ -68,19 +72,23 @@ if __name__ == '__main__':
 
         # Save
         sc.saveobj('results/res_stats.obj', res_stats)
-        sc.saveobj('results/diffs.obj', {'med': diffs_med, 'lb': diffs_lb, 'ub': diffs_ub, 'year': results['year']})
+        sc.saveobj('results/diffs_shipped.obj', {'med': diffs_med, 'lb': diffs_lb, 'ub': diffs_ub, 'year': results['year']})
+        sc.saveobj('results/diffs_actual.obj', {'med': diffs2_med, 'lb': diffs2_lb, 'ub': diffs2_ub, 'year': results['year']})
 
     # Plot the data
     do_plot = True
     if do_plot:
         ut.set_font(24)
         legendfont = 20
-        fig, axes = pl.subplots(2, 1, figsize=(15, 12))
+        fig, axes = pl.subplots(2, 1, figsize=(15, 10))
         axes = axes.ravel()
 
         res_stats = sc.loadobj('results/res_stats.obj')
-        diffs = sc.loadobj('results/diffs.obj')
-        colors = sc.gridcolors(4)
+        diffs = sc.loadobj('results/diffs_shipped.obj')
+        diffs2 = sc.loadobj('results/diffs_actual.obj')
+        colors = sc.gridcolors(6)
+
+        reordered_labels = ['No vaccination', 'Double dose', 'Single dose actual', 'Single dose shipments']
 
         # Top row: cervical cancers over time
         # Hack because the years are stored differently
@@ -93,15 +101,17 @@ if __name__ == '__main__':
         year = year[si:ei]
 
         # Plot cumulative cancers
-        for sn, scen in enumerate(res_stats.keys()):
+        for sn, scen in enumerate(reordered_labels):
             if scen != 'year':
                 res = res_stats[scen]
                 if scen == 'No vaccination':
                     label = 'No vaccination'
                 elif scen == 'Double dose':
-                    label = 'Counterfactual allocation'
-                elif scen == 'Single dose':
-                    label = 'Actual allocation'
+                    label = 'Counterfactual 2-dose allocation with complete utilization'
+                elif scen == 'Single dose actual':
+                    label = 'Single-dose regimen with actual utilization'
+                elif scen == 'Single dose shipments':
+                    label = 'Single-dose regimen with complete utilization'
                 ax = plot_single(ax, res, year, colors[sn], label=label)
         ax.set_title('(A) Cumulative cervical cancers in 2023/24 vaccination cohort')
         ax.set_ylim(bottom=0, top=1.8e6)
@@ -110,7 +120,9 @@ if __name__ == '__main__':
 
         # Plot cumulative cervical cancers averted
         ax = axes[1]
-        ax = plot_single(ax, diffs, year, colors[3], smooth=False)
+        ax = plot_single(ax, diffs, year, colors[4], smooth=False, label='Complete utilization')
+        ax = plot_single(ax, diffs2, year, colors[5], smooth=False, label='Actual utilization')
+        ax.legend(loc='upper left', frameon=False, prop={'size': legendfont})
         ax.set_title('(B) Cumulative cervical cancers averted by single-dose in 2023/24 vaccination cohort')
         ax.set_ylim(bottom=0, top=500e3)
         sc.SIticks(ax)

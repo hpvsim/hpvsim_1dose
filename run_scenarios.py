@@ -98,6 +98,8 @@ def make_vx_scenarios(location=None, year=2024):
         routine_age = (9, 17)
     elif location in ['togo']:
         routine_age = (9, 16)
+    elif location in ['tanzania']:
+        routine_age = (9, 19)
     else:
         routine_age = (9, 15)
 
@@ -117,10 +119,23 @@ def make_vx_scenarios(location=None, year=2024):
     eligibility = lambda sim: (sim.people.doses == 0)
 
     # Coverage levels
+    shipped_coverage = loc.vx_coverage_shipped[location]
     actual_coverage = loc.vx_coverage_actual[location]
     cf_coverage = loc.vx_coverage_cf[location]
 
     # Interventions
+    shipped = hpv.campaign_vx(
+        prob=shipped_coverage,
+        years=year,
+        product=singledose,
+        sex=0,
+        age_range=routine_age,
+        eligibility=eligibility,
+        interpolate=False,
+        annual_prob=False,
+        label='Single dose shipments'
+    )
+
     actual = hpv.campaign_vx(
         prob=actual_coverage,
         years=year,
@@ -130,7 +145,7 @@ def make_vx_scenarios(location=None, year=2024):
         eligibility=eligibility,
         interpolate=False,
         annual_prob=False,
-        label='Single dose'
+        label='Single dose actual'
     )
 
     cf = hpv.campaign_vx(
@@ -145,7 +160,8 @@ def make_vx_scenarios(location=None, year=2024):
         label='Double dose'
     )
 
-    vx_scenarios['Single dose'] = [actual]
+    vx_scenarios['Single dose shipments'] = [shipped]
+    vx_scenarios['Single dose actual'] = [actual]
     vx_scenarios['Double dose'] = [cf]
 
     return vx_scenarios

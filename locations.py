@@ -47,8 +47,8 @@ nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
-vx_coverage_actual = {
-    # Country               WUENIC 2024
+vx_coverage_shipped = {
+    # Country      # % of girls in largest possible cohort - see "HPVsim results" col W
     'bangladesh':   0.93,   # 90
     'burkina faso': 0.55,   # 99 of 9yos
     'cambodia':     0.44,   # 85
@@ -63,9 +63,30 @@ vx_coverage_actual = {
     'nepal':        0.99,   # NA
     'nigeria':      0.87,   # 60
     'sierra leone': 0.20,   # 61
-    'tanzania':     0.90,   # 94
+    'tanzania':     0.56,   # 94
     'togo':         0.94,   # 36
     'zambia':       0.89    # 60
+}
+
+vx_coverage_actual = {
+    # Country      # % of girls in largest possible cohort - see "HPVsim results" col AB
+    'bangladesh':   0.86,
+    'burkina faso': 0.37,
+    'cambodia':     0.33,
+    'cameroon':     0.20,
+    'cote divoire': 0.38,
+    'ethiopia':     0.54,
+    'gambia':       0.53,
+    'laos':         0.45,
+    'mali':         0.03,
+    'mozambique':   0.46,
+    'myanmar':      0.55,
+    'nepal':        0.00,
+    'nigeria':      0.79,
+    'sierra leone': 0.31,
+    'tanzania':     0.95,
+    'togo':         0.50,
+    'zambia':       0.54
 }
 
 ######################
@@ -85,7 +106,7 @@ vx_coverage_cf = {
     'nepal':        0.37,
     'nigeria':      0.33,
     'sierra leone': 0.10,
-    'tanzania':     0.37,
+    'tanzania':     0.30,
     'togo':         0.42,
     'zambia':       0.45
 }
@@ -135,6 +156,27 @@ vx_coverage_denom = {
 }
 
 vx_coverage_extra = {
+    # Country       # Number of girls aged 9-16 in 2024
+    'bangladesh':   4408290,
+    'burkina faso': 496574.5,
+    'cambodia':     218430,
+    'cameroon':     196008.75,
+    'cote divoire': 304361,
+    'ethiopia':     5104041.25,
+    'gambia':       57674.5,
+    'laos':         272697.5,
+    'mali':         133636.5,
+    'mozambique':   569026.25,
+    'myanmar':      607905,
+    'nepal':        840759.5,
+    'nigeria':      7522955,
+    'sierra leone': 39448.75,
+    'tanzania':     2025827.5,
+    'togo':         366480,
+    'zambia':       934548.25
+}
+
+vx_coverage_extra_actual = {
     # Country       # Number of girls aged 9-16 in 2024
     'bangladesh':   4408290,
     'burkina faso': 496574.5,
