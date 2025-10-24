@@ -80,13 +80,15 @@ if __name__ == '__main__':
     if do_plot:
         ut.set_font(24)
         legendfont = 20
-        fig, axes = pl.subplots(2, 1, figsize=(15, 12))
+        fig, axes = pl.subplots(2, 1, figsize=(15, 10))
         axes = axes.ravel()
 
         res_stats = sc.loadobj('results/res_stats.obj')
         diffs = sc.loadobj('results/diffs_shipped.obj')
         diffs2 = sc.loadobj('results/diffs_actual.obj')
         colors = sc.gridcolors(6)
+
+        reordered_labels = ['No vaccination', 'Double dose', 'Single dose actual', 'Single dose shipments']
 
         # Top row: cervical cancers over time
         # Hack because the years are stored differently
@@ -99,17 +101,17 @@ if __name__ == '__main__':
         year = year[si:ei]
 
         # Plot cumulative cancers
-        for sn, scen in enumerate(res_stats.keys()):
+        for sn, scen in enumerate(reordered_labels):
             if scen != 'year':
                 res = res_stats[scen]
                 if scen == 'No vaccination':
                     label = 'No vaccination'
                 elif scen == 'Double dose':
-                    label = 'Counterfactual double-dose allocation'
-                elif scen == 'Single dose shipments':
-                    label = 'Single-dose regimen with complete utilization'
+                    label = 'Counterfactual 2-dose allocation with complete utilization'
                 elif scen == 'Single dose actual':
                     label = 'Single-dose regimen with actual utilization'
+                elif scen == 'Single dose shipments':
+                    label = 'Single-dose regimen with complete utilization'
                 ax = plot_single(ax, res, year, colors[sn], label=label)
         ax.set_title('(A) Cumulative cervical cancers in 2023/24 vaccination cohort')
         ax.set_ylim(bottom=0, top=1.8e6)
