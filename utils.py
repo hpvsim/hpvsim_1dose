@@ -3,11 +3,167 @@ Utilities for multicalibration
 '''
 
 # Imports
+import os
+
 import sciris as sc
 import pandas as pd
 import numpy as np
 import locations as loc
 from scipy.stats import norm, lognorm
+
+
+# ------ CSV extractors (run once from existing .obj/.mres → plot-ready CSVs) ------
+
+SCENARIO_NAMES = ['No vaccination', 'Double dose',
+                  'Single dose shipments', 'Single dose actual']
+
+
+def extract_fig2_csvs(locations, vx_scens_dir='results', out_dir='results'):
+    """Aggregate `raw_cohort_cancers` across countries × seeds × time.
+
+    Emits:
+      fig2_res_stats.csv   — scenario, year, cum_med, cum_lb, cum_ub
+      fig2_diffs.csv       — comparison, year, cum_med, cum_lb, cum_ub
+    """
+    os.makedirs(out_dir, exist_ok=True)
+
+    # raw_cohort_cancers covers the 2024+ cohort (102 years × 20 seeds per country)
+    stacks = {s: None for s in SCENARIO_NAMES}
+    for location in locations:
+        mres = sc.loadobj(f'{vx_scens_dir}/{location.replace(" ", "_")}_vx_scens.obj')
+        for sname in SCENARIO_NAMES:
+            arr = np.asarray(mres[sname]['raw_cohort_cancers'])
+            stacks[sname] = arr.copy() if stacks[sname] is None else stacks[sname] + arr
+    n_years = stacks[SCENARIO_NAMES[0]].shape[0]
+    year = np.arange(2024, 2024 + n_years)
+
+    def _cum_quantiles(arr):
+        return (np.cumsum(np.quantile(arr, 0.5, axis=-1)),
+                np.cumsum(np.quantile(arr, 0.1, axis=-1)),
+                np.cumsum(np.quantile(arr, 0.9, axis=-1)))
+
+    ts_rows = []
+    for sname, arr in stacks.items():
+        med, lb, ub = _cum_quantiles(arr)
+        for yi, yr in enumerate(year):
+            ts_rows.append({'scenario': sname, 'year': float(yr),
+                            'cum_med': float(med[yi]),
+                            'cum_lb': float(lb[yi]),
+                            'cum_ub': float(ub[yi])})
+    pd.DataFrame(ts_rows).to_csv(f'{out_dir}/fig2_res_stats.csv',
+                                 index=False, float_format='%.4f')
+
+    diffs_rows = []
+    for label, (a, b) in {
+        'Single dose shipments vs Double dose': (stacks['Double dose'], stacks['Single dose shipments']),
+        'Single dose actual vs Double dose':     (stacks['Double dose'], stacks['Single dose actual']),
+    }.items():
+        diff = a - b
+        med = np.cumsum(np.median(diff, axis=1))
+        lb = np.cumsum(np.quantile(diff, 0.1, axis=1))
+        ub = np.cumsum(np.quantile(diff, 0.9, axis=1))
+        for yi, yr in enumerate(year):
+            diffs_rows.append({'comparison': label, 'year': float(yr),
+                               'cum_med': float(med[yi]),
+                               'cum_lb': float(lb[yi]),
+                               'cum_ub': float(ub[yi])})
+    pd.DataFrame(diffs_rows).to_csv(f'{out_dir}/fig2_diffs.csv',
+                                    index=False, float_format='%.4f')
+
+
+def extract_figS5_asr_csv(locations, mres_dir='raw_results', out_dir='results',
+                          start_year=2000):
+    """Per-country asr_cancer_incidence time series → figS5_asr.csv."""
+    os.makedirs(out_dir, exist_ok=True)
+    rows = []
+    for location in locations:
+        res = sc.loadobj(f'{mres_dir}/{location.replace(" ", "_")}.mres')
+        years = np.asarray(res['year'])
+        r = res['asr_cancer_incidence']
+        mask = years >= start_year
+        yy = years[mask]
+        vv = np.asarray(r.values)[mask]
+        lo = np.asarray(r.low)[mask]
+        hi = np.asarray(r.high)[mask]
+        for yi, yr in enumerate(yy):
+            rows.append({'location': location, 'year': float(yr),
+                         'value': float(vv[yi]),
+                         'low': float(lo[yi]),
+                         'high': float(hi[yi])})
+    pd.DataFrame(rows).to_csv(f'{out_dir}/figS5_asr.csv',
+                              index=False, float_format='%.4f')
+
+
+def extract_figS6_country_ts_csv(locations, vx_scens_dir='results', out_dir='results'):
+    """Per-country per-scenario cumulative-cancer quantiles → figS6_country_ts.csv."""
+    os.makedirs(out_dir, exist_ok=True)
+    rows = []
+    for location in locations:
+        mres = sc.loadobj(f'{vx_scens_dir}/{location.replace(" ", "_")}_vx_scens.obj')
+        years = np.arange(2024, 2126)
+        for sname, scen_mres in mres.items():
+            arr = np.asarray(scen_mres['raw_cohort_cancers'])
+            med = np.cumsum(np.quantile(arr, 0.5, axis=-1))
+            lb = np.cumsum(np.quantile(arr, 0.1, axis=-1))
+            ub = np.cumsum(np.quantile(arr, 0.9, axis=-1))
+            for yi, yr in enumerate(years):
+                rows.append({'location': location, 'scenario': sname,
+                             'year': int(yr),
+                             'cum_med': float(med[yi]),
+                             'cum_lb': float(lb[yi]),
+                             'cum_ub': float(ub[yi])})
+    pd.DataFrame(rows).to_csv(f'{out_dir}/figS6_country_ts.csv',
+                              index=False, float_format='%.4f')
+
+
+def extract_figS4_calib_csvs(locations, calib_dir='results', out_dir='results',
+                             resname='cancers', date=2020, filestem=''):
+    """Per-country calibration trials by age bin → figS4_calib.csv + figS4_targets.csv.
+
+    model CSV: location, bin_idx, bin_label, run_idx, value
+    target CSV: location, bin_idx, bin_label, value
+    """
+    os.makedirs(out_dir, exist_ok=True)
+    model_rows, target_rows = [], []
+    for location in locations:
+        dfl = location.replace(' ', '_')
+        calib = sc.loadobj(f'{calib_dir}/{dfl}_calib{filestem}_reduced.obj')
+
+        baseres = calib.analyzer_results[0][resname]
+        bins = np.asarray(baseres['bins'])
+        age_labels = [f'{int(bins[i])}-{int(bins[i+1])}' for i in range(len(bins) - 1)]
+        age_labels.append(f'{int(bins[-1])}+')
+
+        for run_idx, run in enumerate(calib.analyzer_results):
+            vals = np.asarray(run[resname][date])
+            for bi, v in enumerate(vals):
+                model_rows.append({'location': location, 'bin_idx': bi,
+                                   'bin_label': age_labels[bi] if bi < len(age_labels) else str(bi),
+                                   'run_idx': run_idx, 'value': float(v)})
+
+        target_df = calib.target_data[0]
+        target_df = target_df[target_df.name == resname]
+        for bi, v in enumerate(target_df.value.values):
+            target_rows.append({'location': location, 'bin_idx': bi,
+                                'bin_label': age_labels[bi] if bi < len(age_labels) else str(bi),
+                                'value': float(v)})
+
+    pd.DataFrame(model_rows).to_csv(f'{out_dir}/figS4_calib.csv',
+                                    index=False, float_format='%.4f')
+    pd.DataFrame(target_rows).to_csv(f'{out_dir}/figS4_targets.csv',
+                                     index=False, float_format='%.4f')
+
+
+def extract_all_csvs(locations=None, results_dir='results',
+                     raw_results_dir='raw_results'):
+    """Convenience: regenerate every plot-ready CSV from obj/mres."""
+    if locations is None:
+        locations = loc.locations
+    extract_fig2_csvs(locations, vx_scens_dir=results_dir, out_dir=results_dir)
+    extract_figS5_asr_csv(locations, mres_dir=raw_results_dir, out_dir=results_dir)
+    extract_figS6_country_ts_csv(locations, vx_scens_dir=results_dir, out_dir=results_dir)
+    extract_figS4_calib_csvs(locations, calib_dir=results_dir, out_dir=results_dir)
+    print(f'Wrote fig2/figS4/figS5/figS6 CSVs to {results_dir}/')
 
 
 def set_font(size=None, font='Libertinus Sans'):
