@@ -19,6 +19,9 @@ figures/
 manuscript/*.docx
 manuscript/*.docx.md
 
+# Private inputs (Gavi shipments + actuals). Public population & coverage % live in data/.
+private/
+
 # Python
 __pycache__/
 *.py[cod]

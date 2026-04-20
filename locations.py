@@ -48,7 +48,7 @@ nosbdata_locations = ["cote d'ivoire", "cote divoire", "laos"]
 cancer_type_locs = ['ethiopia', 'mozambique', 'nigeria', 'tanzania', 'uganda']
 
 vx_coverage_shipped = {
-    # Country      # % of girls in largest possible cohort - see "HPVsim results" col W
+    # Country      # % of girls in largest possible cohort - see "HPVsim results" col AA
     'bangladesh':   0.93,   # 90
     'burkina faso': 0.55,   # 99 of 9yos
     'cambodia':     0.44,   # 85
