@@ -34,6 +34,21 @@ The three dicts in `locations_coverage.py` correspond to the Excel columns:
 where cohort = sum of girls aged 9..`cohort_upper_exclusive`-1
 (per-country, from `data/target_ages.csv`).
 
+## Regenerate the Fig 1 aggregates
+
+```
+python scripts/compute_fig1.py
+```
+
+Writes two CSVs under `data/`:
+
+- `fig1_shipments_summary.csv` -- left block of the Excel `Impact analysis`
+  sheet: total doses by regime (1-dose / 2-dose / switch intention) × year,
+  plus "additional girls reachable" and "approx CC impact".
+- `fig1_allocation.csv` -- right block: for each (year, schedule), doses and
+  girls reached under three scenarios: `complete` (all shipments utilized),
+  `actual` (Gavi actuals nvax), `counterfactual` (all doses on 2-dose schedule).
+
 ## Files
 
 | file                              | status     | source                             |
@@ -43,11 +58,14 @@ where cohort = sum of girls aged 9..`cohort_upper_exclusive`-1
 | `private/gavi_actuals.csv`        | gitignored | XLSX sheet `Gavi actuals`          |
 | `data/population_by_age.csv`      | tracked    | XLSX sheet `Coverage calcs` rows 3-20 |
 | `data/target_ages.csv`            | tracked    | XLSX sheet `WUENIC` + `HPVsim results` col X |
+| `data/fig1_shipments_summary.csv` | tracked    | derived                            |
+| `data/fig1_allocation.csv`        | tracked    | derived                            |
 
 ## Notes
 
-- **Nepal** has no population data in the XLSX (outside the modeled cohort).
-  `compute_coverage.py` emits `None` for Nepal; the downstream
-  `locations.py` keeps its handwritten value (`vx_coverage_actual[nepal]=0.00`).
-- Still to port: the `Impact analysis` sheet aggregates that feed Fig 1
-  (total shipped doses 2023/24 by schedule, switch intention).
+- **Nepal** is out of scope for the paper and is dropped everywhere in the
+  pipeline.
+- **Excel bug** discovered during the port: `Merged` sheet row 24 has Rwanda's
+  iso3 as `RWN` instead of `RWA`, so the Excel `SUMIFS` misses Rwanda's 112,384
+  girls reached in 2024. `compute_fig1.py` joins on the correct iso3 and yields
+  2024 2-dose actual = 2.7185M (vs Excel 2.6061M).

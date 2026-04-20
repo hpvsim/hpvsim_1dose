@@ -48,7 +48,6 @@ SHIPMENT_ALIASES = {
     'Mali': 'mali',
     'Mozambique': 'mozambique',
     'Myanmar': 'myanmar',
-    'Nepal': 'nepal',
     'Nigeria': 'nigeria',
     'Sierra Leone': 'sierra leone',
     'Tanzania': 'tanzania',
@@ -144,7 +143,7 @@ def _format_dict(name, d, locations_order):
 def write_module(shipped, actual, cf, outpath):
     locations_order = [
         'bangladesh', 'burkina faso', 'cambodia', 'cameroon', 'cote divoire',
-        'ethiopia', 'gambia', 'laos', 'mali', 'mozambique', 'myanmar', 'nepal',
+        'ethiopia', 'gambia', 'laos', 'mali', 'mozambique', 'myanmar',
         'nigeria', 'sierra leone', 'tanzania', 'togo', 'zambia',
     ]
     header = (

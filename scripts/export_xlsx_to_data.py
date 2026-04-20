@@ -32,7 +32,6 @@ LOC_ALIASES = {
     'mali':         ['Mali'],
     'mozambique':   ['Mozambique'],
     'myanmar':      ['Myanmar'],
-    'nepal':        ['Nepal'],
     'nigeria':      ['Nigeria'],
     'sierra leone': ['Sierra Leone'],
     'tanzania':     ['Tanzania'],
