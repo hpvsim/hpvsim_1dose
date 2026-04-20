@@ -1,132 +1,96 @@
 """
-Plot time series of cancers in vaccination cohort
+Fig 2: time series of cancers in the vaccination cohort across all countries.
+
+Reads plot-ready CSVs produced by `utils.extract_fig2_csvs`:
+  - fig2_res_stats.csv — cumulative med/lb/ub per scenario × year
+  - fig2_diffs.csv     — cumulative cancers averted by single-dose (shipments / actual)
+
+Run `python -c "import utils as ut; ut.extract_all_csvs()"` on the VM (after
+regenerating `results/*_vx_scens.obj`) to refresh the CSVs.
 """
+import argparse
+import os
 
-
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import pylab as pl
 import sciris as sc
-import pandas as pd
+
 import utils as ut
-import numpy as np
-import locations as loc
 
 
-def plot_single(ax, mres, years, color, label=None, smooth=True, normalize=False):
-
-    best = mres['med'][1:-1]
-    low = mres['lb'][1:-1]
-    high = mres['ub'][1:-1]
-
-    if smooth:
-        best = np.convolve(list(best), np.ones(5), "valid")/5
-        low = np.convolve(list(low), np.ones(5), "valid")/5
-        high = np.convolve(list(high), np.ones(5), "valid")/5
+def _plot_single(ax, sub, color, label=None, smooth=True):
+    years = sub.year.values
+    best = sub.cum_med.values
+    low = sub.cum_lb.values
+    high = sub.cum_ub.values
+    # Match original behaviour: drop first and last points
+    years, best, low, high = years[1:-1], best[1:-1], low[1:-1], high[1:-1]
+    if smooth and len(best) >= 5:
+        best = np.convolve(best, np.ones(5), 'valid') / 5
+        low = np.convolve(low, np.ones(5), 'valid') / 5
+        high = np.convolve(high, np.ones(5), 'valid') / 5
         years = years[4:]
-
-    if normalize:
-        cohorts = loc.vx_coverage_denom
-        denom = sum(cohorts.values())
-        best = best / denom
-        low = low / denom
-        high = high / denom
     ax.plot(years, best, color=color, label=label)
     ax.fill_between(years, low, high, alpha=0.1, color=color)
     return ax
 
 
-# %% Run as a script
+def plot_fig2(resfolder='results/v2.2.6_baseline',
+              outpath='figures/fig2_ts.png'):
+    res_stats = pd.read_csv(f'{resfolder}/fig2_res_stats.csv')
+    diffs = pd.read_csv(f'{resfolder}/fig2_diffs.csv')
+
+    ut.set_font(24)
+    legendfont = 20
+    fig, axes = pl.subplots(2, 1, figsize=(15, 10))
+    axes = axes.ravel()
+    colors = sc.gridcolors(6)
+
+    label_map = {
+        'No vaccination': 'No vaccination',
+        'Double dose': 'Counterfactual 2-dose allocation with complete utilization',
+        'Single dose actual': 'Single-dose regimen with actual utilization',
+        'Single dose shipments': 'Single-dose regimen with complete utilization',
+    }
+    scenarios_order = ['No vaccination', 'Double dose',
+                       'Single dose actual', 'Single dose shipments']
+
+    ax = axes[0]
+    for sn, scen in enumerate(scenarios_order):
+        sub = res_stats[res_stats.scenario == scen].sort_values('year')
+        # Filter to 2025-2125 window
+        sub = sub[(sub.year >= 2025) & (sub.year <= 2125)]
+        _plot_single(ax, sub, color=colors[sn], label=label_map[scen])
+    ax.set_title('(A) Cumulative cervical cancers in 2023/24 vaccination cohort')
+    ax.set_ylim(bottom=0, top=1.8e6)
+    sc.SIticks(ax)
+    ax.legend(loc='upper left', frameon=False, prop={'size': legendfont})
+
+    ax = axes[1]
+    diff_map = {
+        'Single dose shipments vs Double dose': ('Complete utilization', colors[4]),
+        'Single dose actual vs Double dose': ('Actual utilization', colors[5]),
+    }
+    for cmp_label, (legend_label, color) in diff_map.items():
+        sub = diffs[diffs.comparison == cmp_label].sort_values('year')
+        sub = sub[(sub.year >= 2025) & (sub.year <= 2125)]
+        _plot_single(ax, sub, color=color, label=legend_label, smooth=False)
+    ax.legend(loc='upper left', frameon=False, prop={'size': legendfont})
+    ax.set_title('(B) Cumulative cervical cancers averted by single-dose in 2023/24 vaccination cohort')
+    ax.set_ylim(bottom=0, top=500e3)
+    sc.SIticks(ax)
+
+    fig.tight_layout()
+    os.makedirs(os.path.dirname(outpath), exist_ok=True)
+    sc.savefig(outpath, dpi=100)
+
+
 if __name__ == '__main__':
-
-    # Process data into one large dataframe
-    do_process = True
-    if do_process:
-
-        scennames = ['No vaccination', 'Double dose', 'Single dose shipments', 'Single dose actual']
-        results = {k: np.zeros((102, 20)) for k in scennames}  # 102 years, 20 scenarios
-        locations = loc.locations
-        for location in locations:
-            mres = sc.loadobj(f'results/{location.replace(" ", "_")}_vx_scens.obj')
-            for sname in scennames:
-                mres_scen = mres[sname]
-                results[sname] += mres_scen['raw_cohort_cancers']
-        results['year'] = mres_scen['year']
-
-        # Process diffs
-        diffs = results['Double dose'] - results['Single dose shipments']
-        diffs_med = np.cumsum(np.median(diffs, axis=1))
-        diffs_lb = np.cumsum(np.quantile(diffs, q=0.1, axis=1))
-        diffs_ub = np.cumsum(np.quantile(diffs, q=0.9, axis=1))
-        diffs2 = results['Double dose'] - results['Single dose actual']
-        diffs2_med = np.cumsum(np.median(diffs2, axis=1))
-        diffs2_lb = np.cumsum(np.quantile(diffs2, q=0.1, axis=1))
-        diffs2_ub = np.cumsum(np.quantile(diffs2, q=0.9, axis=1))
-
-        # Save results
-        res_stats = sc.objdict()
-        for sname in scennames:
-            res_stats[sname] = sc.objdict()
-            res_stats[sname]['med'] = np.cumsum(np.quantile(results[sname], q=0.5, axis=-1))
-            res_stats[sname]['lb'] = np.cumsum(np.quantile(results[sname], q=0.1, axis=-1))
-            res_stats[sname]['ub'] = np.cumsum(np.quantile(results[sname], q=0.9, axis=-1))
-        res_stats['year'] = results['year']
-
-        # Save
-        sc.saveobj('results/res_stats.obj', res_stats)
-        sc.saveobj('results/diffs_shipped.obj', {'med': diffs_med, 'lb': diffs_lb, 'ub': diffs_ub, 'year': results['year']})
-        sc.saveobj('results/diffs_actual.obj', {'med': diffs2_med, 'lb': diffs2_lb, 'ub': diffs2_ub, 'year': results['year']})
-
-    # Plot the data
-    do_plot = True
-    if do_plot:
-        ut.set_font(24)
-        legendfont = 20
-        fig, axes = pl.subplots(2, 1, figsize=(15, 10))
-        axes = axes.ravel()
-
-        res_stats = sc.loadobj('results/res_stats.obj')
-        diffs = sc.loadobj('results/diffs_shipped.obj')
-        diffs2 = sc.loadobj('results/diffs_actual.obj')
-        colors = sc.gridcolors(6)
-
-        reordered_labels = ['No vaccination', 'Double dose', 'Single dose actual', 'Single dose shipments']
-
-        # Top row: cervical cancers over time
-        # Hack because the years are stored differently
-        ax = axes[0]
-        year = res_stats['year']
-        start_year = 2025
-        end_year = 2125
-        si = sc.findinds(year, start_year)[0]
-        ei = sc.findinds(year, end_year)[0]
-        year = year[si:ei]
-
-        # Plot cumulative cancers
-        for sn, scen in enumerate(reordered_labels):
-            if scen != 'year':
-                res = res_stats[scen]
-                if scen == 'No vaccination':
-                    label = 'No vaccination'
-                elif scen == 'Double dose':
-                    label = 'Counterfactual 2-dose allocation with complete utilization'
-                elif scen == 'Single dose actual':
-                    label = 'Single-dose regimen with actual utilization'
-                elif scen == 'Single dose shipments':
-                    label = 'Single-dose regimen with complete utilization'
-                ax = plot_single(ax, res, year, colors[sn], label=label)
-        ax.set_title('(A) Cumulative cervical cancers in 2023/24 vaccination cohort')
-        ax.set_ylim(bottom=0, top=1.8e6)
-        sc.SIticks(ax)
-        ax.legend(loc='upper left', frameon=False, prop={'size': legendfont})
-
-        # Plot cumulative cervical cancers averted
-        ax = axes[1]
-        ax = plot_single(ax, diffs, year, colors[4], smooth=False, label='Complete utilization')
-        ax = plot_single(ax, diffs2, year, colors[5], smooth=False, label='Actual utilization')
-        ax.legend(loc='upper left', frameon=False, prop={'size': legendfont})
-        ax.set_title('(B) Cumulative cervical cancers averted by single-dose in 2023/24 vaccination cohort')
-        ax.set_ylim(bottom=0, top=500e3)
-        sc.SIticks(ax)
-
-        fig.tight_layout()
-        fig_name = 'figures/fig2_ts.png'
-        sc.savefig(fig_name, dpi=100)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--resfolder', default='results/v2.2.6_baseline')
+    parser.add_argument('--outpath', default='figures/fig2_ts.png')
+    args = parser.parse_args()
+    plot_fig2(resfolder=args.resfolder, outpath=args.outpath)
+    print('Done.')

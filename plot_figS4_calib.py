@@ -1,85 +1,73 @@
 """
-Plot calibrations
-"""
+Fig S4: calibration boxplots (cancers by age) for each country.
 
-# Import packages
-import sciris as sc
+Reads `figS4_calib.csv` (model trials) + `figS4_targets.csv` (Globocan) produced
+by `utils.extract_figS4_calib_csvs`.
+"""
+import argparse
+import os
+
 import numpy as np
-import pylab as pl
 import pandas as pd
+import pylab as pl
+import sciris as sc
 import seaborn as sns
 
-
-# Imports from this repository
 import locations as loc
 import utils as ut
 
 
-#%% Plotting functions
-def plot_figS1(locations, filestem='', n_results=50):
+def plot_figS4(locations, resfolder='results/v2.2.6_baseline',
+               outpath='figures/figS4_calib.png'):
+    model = pd.read_csv(f'{resfolder}/figS4_calib.csv')
+    targets = pd.read_csv(f'{resfolder}/figS4_targets.csv')
 
     ut.set_font(16)
     n_plots = len(locations)
-    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12,10))
+    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12, 10))
     axes = axes.flatten()
-    resname = 'cancers'
-    plot_count = 0
-    date = 2020
 
     for pn, location in enumerate(locations):
+        ax = axes[pn]
 
-        # Plot settings
-        ax = axes[plot_count]
+        t_sub = targets[targets.location == location].sort_values('bin_idx')
+        m_sub = model[model.location == location]
 
-        dflocation = location.replace(' ', '_')
-        calib = sc.loadobj(f'results/{dflocation}_calib{filestem}_reduced.obj')
-        reslist = calib.analyzer_results
-        target_data = calib.target_data[0]
-        target_data = target_data[(target_data.name == resname)]
+        if t_sub.empty or m_sub.empty:
+            continue
 
-        # Make labels
-        baseres = reslist[0]['cancers']
-        age_labels = [str(int(baseres['bins'][i])) + '-' + str(int(baseres['bins'][i + 1])) for i in range(len(baseres['bins'])-1)]
-        age_labels.append(str(int(baseres['bins'][-1])) + '+')
-        res = reslist
+        x = np.arange(len(t_sub))
+        ax.scatter(x, t_sub.value.values, color='k', marker='s', label='Data')
 
-        # Plot data
-        x = np.arange(len(age_labels))
-        ydata = np.array(target_data.value)
-        ax.scatter(x, ydata, color='k', marker='s', label='Data')
+        sns.boxplot(ax=ax, x='bin_idx', y='value', data=m_sub,
+                    color='b', boxprops=dict(alpha=.4))
 
-        # Construct a dataframe with things in the most logical order for plotting
-        bins = []
-        values = []
-        for run_num, run in enumerate(res):
-            bins += x.tolist()
-            values += list(run[resname][date])
-        modeldf = pd.DataFrame({'bins': bins, 'values': values})
-        sns.boxplot(ax=ax, x='bins', y='values', data=modeldf, color='b', boxprops=dict(alpha=.4))
-
-        # Set title and labels
-        title_country = location.title()
-        if title_country == 'Cote Divoire':
-            title_country = "Cote d'Ivoire"
-        ax.set_title(title_country)
+        title = location.title()
+        if title == 'Cote Divoire':
+            title = "Cote d'Ivoire"
+        ax.set_title(title)
         ax.set_ylabel('')
         ax.set_xlabel('')
-        # Turn legend off
-        ax.legend().remove()
         if pn in [0, 4, 8, 12, 16]:
             ax.set_ylabel('# cancers')
-        stride = np.arange(0, len(baseres['bins']), 2)
-        ax.set_xticks(x[stride], baseres['bins'].astype(int)[stride])
-        plot_count += 1
+
+        # Show every other age bin as x-tick
+        bin_labels = t_sub.bin_label.values
+        stride = np.arange(0, len(bin_labels), 2)
+        ax.set_xticks(x[stride])
+        ax.set_xticklabels([bin_labels[i].split('-')[0] if '-' in bin_labels[i]
+                            else bin_labels[i].replace('+', '')
+                            for i in stride])
 
     fig.tight_layout()
-    pl.savefig(f"figures/figS4_calib.png", dpi=100)
+    os.makedirs(os.path.dirname(outpath), exist_ok=True)
+    pl.savefig(outpath, dpi=100)
 
 
-#%% Run as a script
 if __name__ == '__main__':
-
-    locations = loc.locations
-    plot_figS1(locations)
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--resfolder', default='results/v2.2.6_baseline')
+    parser.add_argument('--outpath', default='figures/figS4_calib.png')
+    args = parser.parse_args()
+    plot_figS4(loc.locations, resfolder=args.resfolder, outpath=args.outpath)
     print('Done.')

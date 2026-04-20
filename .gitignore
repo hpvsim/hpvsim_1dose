@@ -1,0 +1,25 @@
+# Large sim outputs are regenerable on VMs, not committed.
+# Plot-ready CSVs frozen under results/v<version>_baseline/ ARE committed.
+raw_results/
+
+# Top-level results/ is a transient VM-run scratch area. Specific outputs are
+# still tracked (see whitelist below).
+results/*.sim
+results/*.msim
+results/*.mres
+results/*.zip
+
+# Archives + local artifacts
+*.zip
+figures/
+
+# Confidential working files (Excel workbook has non-public shipment data)
+*.xlsx
+*.docx
+manuscript/*.docx
+manuscript/*.docx.md
+
+# Python
+__pycache__/
+*.py[cod]
+.DS_Store

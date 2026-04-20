@@ -1,69 +1,63 @@
 """
-Plot ASR
+Fig S5: per-country ASR cancer-incidence time series vs Globocan 2020.
+
+Reads `figS5_asr.csv` (per-country TS) + `data/<loc>_asr_cancer_incidence.csv` (Globocan).
 """
-import hpvsim as hpv
-import pylab as pl
-import pandas as pd
+import argparse
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import pylab as pl
 import sciris as sc
-import utils as ut
-import seaborn as sns
-from matplotlib.ticker import FormatStrFormatter
 
-
-
-# Imports from this repository
 import locations as loc
 import utils as ut
 
 
-#%% Plotting functions
-def plot_figS2(locations):
+def plot_figS5(locations, resfolder='results/v2.2.6_baseline',
+               datafolder='data', outpath='figures/figS5_asr.png'):
+    asr_df = pd.read_csv(f'{resfolder}/figS5_asr.csv')
 
     ut.set_font(16)
     colors = sc.gridcolors(2)
-
     n_plots = len(locations)
-    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12,10))
+    fig, axes = sc.getrowscols(n_plots, make=True, remove_extra=True, figsize=(12, 10))
     axes = axes.flatten()
-    resname = 'asr_cancer_incidence'
-    plot_count = 0
-    date = 2020
 
     for pn, location in enumerate(locations):
+        ax = axes[pn]
+        sub = asr_df[asr_df.location == location].sort_values('year')
+        if sub.empty:
+            continue
+        years = sub.year.values
+        ax.plot(years, sub.value.values, color=colors[0], label='HPVsim')
+        ax.fill_between(years, sub.low.values, sub.high.values,
+                        color=colors[0], alpha=0.3)
 
-        # Plot settings
-        ax = axes[plot_count]
-        dflocation = location.replace(' ', '_')
-        res = sc.loadobj(f'raw_results/{dflocation}.mres')
-        data = pd.read_csv(f'data/{dflocation}_asr_cancer_incidence.csv')
-
-        start_year = 2000
-        ind = sc.findinds(res['year'], start_year)[0]
-        years = res['year'][ind:]
-
-        ax.plot(years, res[resname].values[ind:], color=colors[0], label=f'HPVsim')
-        ax.fill_between(years, res[resname].low[ind:],
-                                res[resname].high[ind:], color=colors[0], alpha=0.3)
-
-        ax.plot(2020, data['value'].values[0], marker='s', color=colors[1], label='Globocan')
+        dfl = location.replace(' ', '_')
+        try:
+            data = pd.read_csv(f'{datafolder}/{dfl}_asr_cancer_incidence.csv')
+            ax.plot(2020, data['value'].values[0], marker='s',
+                    color=colors[1], label='Globocan')
+        except FileNotFoundError:
+            pass
         ax.set_ylabel('ASR incidence (per 100k)')
-        # sc.SIticks(ax)
         ax.set_title(location.capitalize())
-        ax.legend()
         ax.set_ylim(bottom=0)
-        # Turn legend off
-        ax.legend().remove()
-
-        plot_count += 1
 
     fig.tight_layout()
-    pl.savefig(f"figures/figS5_asr.png", dpi=100)
+    os.makedirs(os.path.dirname(outpath), exist_ok=True)
+    pl.savefig(outpath, dpi=100)
 
 
-# %% Run as a script
 if __name__ == '__main__':
-
-    plot_figS2(locations=loc.locations)
-
-    print('Done.') 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--resfolder', default='results/v2.2.6_baseline')
+    parser.add_argument('--datafolder', default='data')
+    parser.add_argument('--outpath', default='figures/figS5_asr.png')
+    args = parser.parse_args()
+    plot_figS5(loc.locations, resfolder=args.resfolder,
+               datafolder=args.datafolder, outpath=args.outpath)
+    print('Done.')
