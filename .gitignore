@@ -13,6 +13,12 @@ results/*.zip
 *.zip
 figures/
 
+# Confidential working files (Excel workbook has non-public shipment data)
+*.xlsx
+*.docx
+manuscript/*.docx
+manuscript/*.docx.md
+
 # Python
 __pycache__/
 *.py[cod]
