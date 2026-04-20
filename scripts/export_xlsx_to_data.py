@@ -109,10 +109,17 @@ def export_target_ages(xlsx, outpath):
         w = csv.writer(f)
         w.writerow(['location', 'iso3', 'target_lower', 'target_upper',
                     'schedule_2023', 'schedule_2024',
-                    'wastage_factor', 'cohort_upper_exclusive'])
+                    'wastage_factor', 'cohort_upper_exclusive',
+                    'cf_upper_exclusive'])
         for loc in LOCATIONS_ORDER:
             if loc in rows_by_loc:
-                w.writerow([loc] + list(rows_by_loc[loc]))
+                row = list(rows_by_loc[loc])
+                cohort_upper = row[-1]
+                # Counterfactual 2-dose scenario assumes catch-up reaches at
+                # least age 16 (cohort 9..16, i.e. upper-exclusive=17). Countries
+                # whose program already extends past 16 keep their wider cohort.
+                cf_upper = max(cohort_upper, 17) if cohort_upper else 17
+                w.writerow([loc] + row + [cf_upper])
             else:
                 print(f'WARNING: no WUENIC row for {loc!r}')
 

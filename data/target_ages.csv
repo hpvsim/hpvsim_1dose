@@ -1,17 +1,17 @@
-location,iso3,target_lower,target_upper,schedule_2023,schedule_2024,wastage_factor,cohort_upper_exclusive
-bangladesh,BGD,10,14,1,1,0.9,15
-burkina faso,BFA,9,9,1,1,0.95,15
-cambodia,KHM,9,9,1,1,0.9,15
-cameroon,CMR,9,9,1,1,0.95,15
-cote divoire,CIV,9,9,1,1,0.95,15
-ethiopia,ETH,14,14,2,1,0.95,17
-gambia,GMB,9,14,2,1,0.95,15
-laos,LAO,10,10,2,1,0.95,17
-mali,MLI,10,10,,1,0.95,15
-mozambique,MOZ,9,9,2,1,0.95,15
-myanmar,MMR,9,9,1,1,0.95,15
-nigeria,NGA,9,14,1,1,0.95,15
-sierra leone,SLE,10,10,2,1,0.95,15
-tanzania,TZA,14,14,2,1,0.95,19
-togo,TGO,9,14,1,1,0.9,16
-zambia,ZMB,14,14,1,1,0.95,17
+location,iso3,target_lower,target_upper,schedule_2023,schedule_2024,wastage_factor,cohort_upper_exclusive,cf_upper_exclusive
+bangladesh,BGD,10,14,1,1,0.9,15,17
+burkina faso,BFA,9,9,1,1,0.95,15,17
+cambodia,KHM,9,9,1,1,0.9,15,17
+cameroon,CMR,9,9,1,1,0.95,15,17
+cote divoire,CIV,9,9,1,1,0.95,15,17
+ethiopia,ETH,14,14,2,1,0.95,17,17
+gambia,GMB,9,14,2,1,0.95,15,17
+laos,LAO,10,10,2,1,0.95,17,17
+mali,MLI,10,10,,1,0.95,15,17
+mozambique,MOZ,9,9,2,1,0.95,15,17
+myanmar,MMR,9,9,1,1,0.95,15,17
+nigeria,NGA,9,14,1,1,0.95,15,17
+sierra leone,SLE,10,10,2,1,0.95,15,17
+tanzania,TZA,14,14,2,1,0.95,19,19
+togo,TGO,9,14,1,1,0.9,16,17
+zambia,ZMB,14,14,1,1,0.95,17,17

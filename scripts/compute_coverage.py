@@ -97,6 +97,11 @@ def compute(private_dir, data_dir):
             print(f'SKIP {loc}: cohort unknown')
             continue
 
+        # Counterfactual uses a (possibly broader) catch-up cohort: 9..16 for
+        # most countries, or the country's own cohort if it already extends past
+        # 16. Column `cf_upper_exclusive` in target_ages.csv encodes this.
+        cf_cohort = _cohort_size(pop.loc[loc], trow['cf_upper_exclusive'])
+
         wastage = trow['wastage_factor']
         sch23 = trow['schedule_2023']
         sch24 = trow['schedule_2024']
@@ -109,8 +114,9 @@ def compute(private_dir, data_dir):
         vax24 = (d24 * wastage / sch24) if (pd.notna(sch24) and sch24) else 0.0
         shipped[loc] = (vax23 + vax24) / cohort
 
-        # --- cf: treat every dose as a 2-dose regimen ⇒ doses × wastage / 2.
-        cf[loc] = (d23 + d24) * wastage / 2.0 / cohort
+        # --- cf: 2-dose counterfactual -- half the doses reach girls, spread
+        #     over a broader catch-up cohort (ages 9..16 for most).
+        cf[loc] = (d23 + d24) * wastage / 2.0 / cf_cohort
 
         # --- actual: from Gavi actuals nvax (girls reached), reshaped as
         #     doses = schedule × nvax. Excel: WUENIC!T = R + S

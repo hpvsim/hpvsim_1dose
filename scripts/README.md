@@ -27,12 +27,19 @@ The three dicts in `locations_coverage.py` correspond to the Excel columns:
 
 | dict                   | Excel col | meaning                                         |
 | ---------------------- | --------- | ----------------------------------------------- |
-| `vx_coverage_shipped`  | AA        | doses shipped × wastage / schedule, / cohort    |
-| `vx_coverage_actual`   | AF        | doses from Gavi actuals × schedule / wastage, / cohort |
-| `vx_coverage_cf`       | AC        | (doses 2023 + doses 2024) × wastage / 2, / cohort (counterfactual 2-dose schedule) |
+| `vx_coverage_shipped`  | AA        | doses × wastage / schedule, / cohort            |
+| `vx_coverage_actual`   | AF        | Gavi actuals nvax × schedule / wastage, / cohort |
+| `vx_coverage_cf`       | --        | (doses 2023 + doses 2024) × wastage / 2, / cf_cohort (2-dose counterfactual) |
 
-where cohort = sum of girls aged 9..`cohort_upper_exclusive`-1
-(per-country, from `data/target_ages.csv`).
+Cohort denominators are per-country, pulled from `data/target_ages.csv`:
+
+- `cohort_upper_exclusive` -- used for `shipped` and `actual`. Girls aged
+  9..upper-1. Sourced from `HPVsim results` col X.
+- `cf_upper_exclusive` -- used for `cf`. Under a 2-dose counterfactual, half as
+  many girls are reached per dose pair, so they're spread over a broader
+  catch-up cohort: ages 9..16 (upper=17) for most countries, or the country's
+  own `cohort_upper_exclusive` if it already extends past age 16 (Tanzania
+  stays at 19). Formula: `cf_upper_exclusive = max(cohort_upper_exclusive, 17)`.
 
 ## Regenerate the Fig 1 aggregates
 
