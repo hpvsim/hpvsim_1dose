@@ -115,7 +115,9 @@ def make_vx_scenarios(location=None, year=2024):
     else:
         product = 'nonavalent'
     singledose = hpv.default_vx(prod_name=product)
-    singledose.imm_init = dict(dist='uniform', par1=0.98, par2=0.99)
+    # v2.3 vx requires scalar imm_init (sterilizing probability); was
+    # dict(dist='uniform', par1=0.98, par2=0.99) — use the mean.
+    singledose.imm_init = 0.985
     eligibility = lambda sim: (sim.people.doses == 0)
 
     # Coverage levels

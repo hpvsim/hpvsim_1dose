@@ -1,0 +1,273 @@
+location,bin_idx,bin_label,value
+bangladesh,0,0-15,0.0000
+bangladesh,1,15-20,6.0000
+bangladesh,2,20-25,23.0000
+bangladesh,3,25-30,193.0000
+bangladesh,4,30-35,536.0000
+bangladesh,5,35-40,859.0000
+bangladesh,6,40-45,1139.0000
+bangladesh,7,45-50,1256.0000
+bangladesh,8,50-55,1290.0000
+bangladesh,9,55-60,1122.0000
+bangladesh,10,60-65,751.0000
+bangladesh,11,65-70,419.0000
+bangladesh,12,70-75,318.0000
+bangladesh,13,75-80,206.0000
+bangladesh,14,80-85,98.0000
+bangladesh,15,85+,52.0000
+burkina faso,0,0-15,0.0000
+burkina faso,1,15-20,0.0000
+burkina faso,2,20-25,0.0000
+burkina faso,3,25-30,29.0000
+burkina faso,4,30-35,92.0000
+burkina faso,5,35-40,136.0000
+burkina faso,6,40-45,161.0000
+burkina faso,7,45-50,164.0000
+burkina faso,8,50-55,149.0000
+burkina faso,9,55-60,135.0000
+burkina faso,10,60-65,112.0000
+burkina faso,11,65-70,81.0000
+burkina faso,12,70-75,48.0000
+burkina faso,13,75-80,21.0000
+burkina faso,14,80-85,4.0000
+burkina faso,15,85+,0.0000
+cambodia,0,0-15,0.0000
+cambodia,1,15-20,4.0000
+cambodia,2,20-25,14.0000
+cambodia,3,25-30,54.0000
+cambodia,4,30-35,80.0000
+cambodia,5,35-40,165.0000
+cambodia,6,40-45,89.0000
+cambodia,7,45-50,138.0000
+cambodia,8,50-55,146.0000
+cambodia,9,55-60,136.0000
+cambodia,10,60-65,106.0000
+cambodia,11,65-70,87.0000
+cambodia,12,70-75,55.0000
+cambodia,13,75-80,34.0000
+cambodia,14,80-85,18.0000
+cambodia,15,85+,9.0000
+cameroon,0,0-15,0.0000
+cameroon,1,15-20,0.0000
+cameroon,2,20-25,10.0000
+cameroon,3,25-30,131.0000
+cameroon,4,30-35,245.0000
+cameroon,5,35-40,351.0000
+cameroon,6,40-45,399.0000
+cameroon,7,45-50,393.0000
+cameroon,8,50-55,356.0000
+cameroon,9,55-60,295.0000
+cameroon,10,60-65,230.0000
+cameroon,11,65-70,171.0000
+cameroon,12,70-75,109.0000
+cameroon,13,75-80,56.0000
+cameroon,14,80-85,20.0000
+cameroon,15,85+,4.0000
+cote divoire,0,0-15,0.0000
+cote divoire,1,15-20,3.0000
+cote divoire,2,20-25,9.0000
+cote divoire,3,25-30,10.0000
+cote divoire,4,30-35,58.0000
+cote divoire,5,35-40,123.0000
+cote divoire,6,40-45,195.0000
+cote divoire,7,45-50,242.0000
+cote divoire,8,50-55,276.0000
+cote divoire,9,55-60,301.0000
+cote divoire,10,60-65,294.0000
+cote divoire,11,65-70,238.0000
+cote divoire,12,70-75,155.0000
+cote divoire,13,75-80,101.0000
+cote divoire,14,80-85,47.0000
+cote divoire,15,85+,15.0000
+ethiopia,0,0-15,0.0000
+ethiopia,1,15-20,0.0000
+ethiopia,2,20-25,46.0000
+ethiopia,3,25-30,108.0000
+ethiopia,4,30-35,300.0000
+ethiopia,5,35-40,546.0000
+ethiopia,6,40-45,788.0000
+ethiopia,7,45-50,977.0000
+ethiopia,8,50-55,1094.0000
+ethiopia,9,55-60,1016.0000
+ethiopia,10,60-65,933.0000
+ethiopia,11,65-70,701.0000
+ethiopia,12,70-75,512.0000
+ethiopia,13,75-80,276.0000
+ethiopia,14,80-85,110.0000
+ethiopia,15,85+,38.0000
+gambia,0,0-15,0.0000
+gambia,1,15-20,1.0000
+gambia,2,20-25,12.0000
+gambia,3,25-30,22.0000
+gambia,4,30-35,29.0000
+gambia,5,35-40,32.0000
+gambia,6,40-45,32.0000
+gambia,7,45-50,30.0000
+gambia,8,50-55,23.0000
+gambia,9,55-60,17.0000
+gambia,10,60-65,13.0000
+gambia,11,65-70,15.0000
+gambia,12,70-75,21.0000
+gambia,13,75-80,20.0000
+gambia,14,80-85,13.0000
+gambia,15,85+,6.0000
+laos,0,0-15,0.0000
+laos,1,15-20,2.0000
+laos,2,20-25,6.0000
+laos,3,25-30,19.0000
+laos,4,30-35,30.0000
+laos,5,35-40,40.0000
+laos,6,40-45,47.0000
+laos,7,45-50,49.0000
+laos,8,50-55,46.0000
+laos,9,55-60,40.0000
+laos,10,60-65,31.0000
+laos,11,65-70,24.0000
+laos,12,70-75,17.0000
+laos,13,75-80,11.0000
+laos,14,80-85,6.0000
+laos,15,85+,3.0000
+mali,0,0-15,0.0000
+mali,1,15-20,0.0000
+mali,2,20-25,13.0000
+mali,3,25-30,61.0000
+mali,4,30-35,114.0000
+mali,5,35-40,173.0000
+mali,6,40-45,224.0000
+mali,7,45-50,263.0000
+mali,8,50-55,262.0000
+mali,9,55-60,245.0000
+mali,10,60-65,222.0000
+mali,11,65-70,179.0000
+mali,12,70-75,107.0000
+mali,13,75-80,54.0000
+mali,14,80-85,14.0000
+mali,15,85+,1.0000
+mozambique,0,0-15,0.0000
+mozambique,1,15-20,49.0000
+mozambique,2,20-25,263.0000
+mozambique,3,25-30,422.0000
+mozambique,4,30-35,552.0000
+mozambique,5,35-40,650.0000
+mozambique,6,40-45,685.0000
+mozambique,7,45-50,669.0000
+mozambique,8,50-55,596.0000
+mozambique,9,55-60,484.0000
+mozambique,10,60-65,360.0000
+mozambique,11,65-70,264.0000
+mozambique,12,70-75,175.0000
+mozambique,13,75-80,95.0000
+mozambique,14,80-85,38.0000
+mozambique,15,85+,11.0000
+myanmar,0,0-15,0.0000
+myanmar,1,15-20,0.0000
+myanmar,2,20-25,47.0000
+myanmar,3,25-30,252.0000
+myanmar,4,30-35,460.0000
+myanmar,5,35-40,719.0000
+myanmar,6,40-45,972.0000
+myanmar,7,45-50,1085.0000
+myanmar,8,50-55,1052.0000
+myanmar,9,55-60,796.0000
+myanmar,10,60-65,573.0000
+myanmar,11,65-70,456.0000
+myanmar,12,70-75,286.0000
+myanmar,13,75-80,206.0000
+myanmar,14,80-85,137.0000
+myanmar,15,85+,88.0000
+nepal,0,0-15,0.0000
+nepal,1,15-20,0.0000
+nepal,2,20-25,10.0000
+nepal,3,25-30,4.0000
+nepal,4,30-35,38.0000
+nepal,5,35-40,108.0000
+nepal,6,40-45,183.0000
+nepal,7,45-50,249.0000
+nepal,8,50-55,287.0000
+nepal,9,55-60,269.0000
+nepal,10,60-65,250.0000
+nepal,11,65-70,246.0000
+nepal,12,70-75,231.0000
+nepal,13,75-80,200.0000
+nepal,14,80-85,107.0000
+nepal,15,85+,62.0000
+nigeria,0,0-15,0.0000
+nigeria,1,15-20,25.0000
+nigeria,2,20-25,333.0000
+nigeria,3,25-30,858.0000
+nigeria,4,30-35,1231.0000
+nigeria,5,35-40,1534.0000
+nigeria,6,40-45,1651.0000
+nigeria,7,45-50,1520.0000
+nigeria,8,50-55,1312.0000
+nigeria,9,55-60,1124.0000
+nigeria,10,60-65,912.0000
+nigeria,11,65-70,666.0000
+nigeria,12,70-75,460.0000
+nigeria,13,75-80,122.0000
+nigeria,14,80-85,39.0000
+nigeria,15,85+,0.0000
+sierra leone,0,0-15,0.0000
+sierra leone,1,15-20,0.0000
+sierra leone,2,20-25,3.0000
+sierra leone,3,25-30,9.0000
+sierra leone,4,30-35,22.0000
+sierra leone,5,35-40,37.0000
+sierra leone,6,40-45,50.0000
+sierra leone,7,45-50,61.0000
+sierra leone,8,50-55,71.0000
+sierra leone,9,55-60,73.0000
+sierra leone,10,60-65,66.0000
+sierra leone,11,65-70,51.0000
+sierra leone,12,70-75,34.0000
+sierra leone,13,75-80,18.0000
+sierra leone,14,80-85,7.0000
+sierra leone,15,85+,2.0000
+tanzania,0,0-15,0.0000
+tanzania,1,15-20,0.0000
+tanzania,2,20-25,14.0000
+tanzania,3,25-30,206.0000
+tanzania,4,30-35,467.0000
+tanzania,5,35-40,730.0000
+tanzania,6,40-45,968.0000
+tanzania,7,45-50,1151.0000
+tanzania,8,50-55,1273.0000
+tanzania,9,55-60,1440.0000
+tanzania,10,60-65,1430.0000
+tanzania,11,65-70,1177.0000
+tanzania,12,70-75,852.0000
+tanzania,13,75-80,413.0000
+tanzania,14,80-85,119.0000
+tanzania,15,85+,0.0000
+togo,0,0-15,0.0000
+togo,1,15-20,0.0000
+togo,2,20-25,3.0000
+togo,3,25-30,3.0000
+togo,4,30-35,12.0000
+togo,5,35-40,28.0000
+togo,6,40-45,43.0000
+togo,7,45-50,56.0000
+togo,8,50-55,60.0000
+togo,9,55-60,64.0000
+togo,10,60-65,62.0000
+togo,11,65-70,51.0000
+togo,12,70-75,36.0000
+togo,13,75-80,22.0000
+togo,14,80-85,11.0000
+togo,15,85+,4.0000
+zambia,0,0-15,0.0000
+zambia,1,15-20,4.0000
+zambia,2,20-25,14.0000
+zambia,3,25-30,118.0000
+zambia,4,30-35,224.0000
+zambia,5,35-40,333.0000
+zambia,6,40-45,409.0000
+zambia,7,45-50,403.0000
+zambia,8,50-55,366.0000
+zambia,9,55-60,363.0000
+zambia,10,60-65,329.0000
+zambia,11,65-70,268.0000
+zambia,12,70-75,188.0000
+zambia,13,75-80,101.0000
+zambia,14,80-85,36.0000
+zambia,15,85+,5.0000
