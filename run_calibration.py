@@ -1,140 +1,102 @@
 """
-Calibrate
+Calibrate (HPVsim v3).
+
+IMPORTANT — API CHANGE. HPVsim v3 delegates calibration to Starsim's
+``ss.Calibration`` (re-exported as ``hpv.Calibration``), whose signature is:
+
+    hpv.Calibration(sim, calib_pars, *, data=None, weights=None,
+                    gof_kwargs=None, build_fn=None, eval_fn=None, eval_kw=None,
+                    **kwargs)
+
+This is quite different from the v2 ``Calibration(sim, calib_pars=,
+genotype_pars=, datafiles=, extra_sim_result_keys=, total_trials=, n_workers=,
+storage=)`` used previously:
+
+* ``calib_pars`` is an Optuna-style search space applied via a ``build_fn``
+  that mutates the sim in place. For this project the tuned parameters are the
+  network cross-layer probabilities and casual ``partners`` (network-level in
+  v3, see run_sim.build_network) plus per-genotype ``cin_fn`` shape ``k`` — so
+  ``build_fn`` must rebuild the ``hpv.SexualNetwork`` / ``genotype_pars`` from
+  the sampled values (the v2 flat ``calib_pars`` dict path no longer applies).
+* Age-stratified cancer targets are supplied via ``data=`` and scored with an
+  ``eval_fn`` over an ``hpv.AgeResults`` analyzer (see the v3 calibration
+  tutorial), replacing v2's ``datafiles`` + ``extra_sim_result_keys``.
+
+Per the migration mandate this calibration is NOT run (it is a long Optuna
+search); the committed per-country ``results/<loc>_pars.obj`` are reused by
+run_sim/run_scenarios. Porting the search itself to ``build_fn``/``eval_fn`` and
+re-fitting is a follow-up (and, per the verification findings, IS required for
+v3 — the v2-fit transmission parameters do not sustain the epidemic on the v3
+engine). The scaffold below shows the intended v3 structure.
 """
 
-# Additions to handle numpy multithreading
 import os
+os.environ.update(OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
+                  NUMEXPR_NUM_THREADS='1', MKL_NUM_THREADS='1')
 
-os.environ.update(
-    OMP_NUM_THREADS='1',
-    OPENBLAS_NUM_THREADS='1',
-    NUMEXPR_NUM_THREADS='1',
-    MKL_NUM_THREADS='1',
-)
-
-# Standard imports
 import sciris as sc
+import numpy as np
 import hpvsim as hpv
 
-# Imports from this repository
 import run_sim as rs
 import utils as ut
 import locations as loc
 
-# CONFIGURATIONS TO BE SET BY USERS BEFORE RUNNING
+# CONFIGURATIONS
 to_run = [
-    # 'run_calibration',  # Make sure this is uncommented if you want to _run_ the calibrations (usually on VMs)
-    'plot_calibration',  # Make sure this is uncommented if you want to _plot_ the calibrations (usually locally)
+    # 'run_calibration',  # long Optuna search — do NOT enable casually
+    'load_pars',          # reuse committed calibrated pars
 ]
-debug = False  # If True, this will do smaller runs that can be run locally for debugging
-do_save = True
+debug = False
 locations = loc.locations
-
-# Run settings for calibration (dependent on debug)
-n_trials = [1000, 1][debug]  # How many trials to run for calibration
-n_workers = [40, 1][debug]  # How many cores to use
-# storage = ["mysql://hpvsim_user@localhost/hpvsim_db", None][debug]  # Storage for calibrations
+n_trials = [1000, 1][debug]
+n_workers = [40, 1][debug]
 storage = None
 
-########################################################################
-# Run calibration
-########################################################################
+
 def make_priors():
-    default = dict(
-        cin_fn=dict(k=[.2, .15, .4, 0.01]),
+    """Search-space priors (unchanged in intent): per-genotype CIN-curve slope
+    ``k`` for hi5/ohr. In v3 these are applied through ``genotype_pars`` in the
+    Calibration ``build_fn``."""
+    return dict(
+        hi5=dict(cin_fn=dict(k=[.2, .15, .4, 0.01])),
+        ohr=dict(cin_fn=dict(k=[.2, .15, .4, 0.01])),
     )
-    genotype_pars = dict(
-        hi5=sc.dcp(default),
-        ohr=sc.dcp(default)
-    )
-    return genotype_pars
 
 
 def run_calib(location=None, n_trials=None, n_workers=None,
               do_plot=False, do_save=True, filestem=''):
-
-    sim = rs.make_sim(location, calib=True)
-    datafiles = ut.make_datafiles([location])[location]
-
-    # Define the calibration parameters
-    calib_pars = dict(
-        beta=[0.2, 0.1, 0.34, 0.02],
-        m_cross_layer=[0.3, 0.1, 0.7, 0.05],
-        m_partners=dict(
-            c=dict(par1=[0.2, 0.1, 0.6, 0.02])
-        ),
-        f_cross_layer=[0.1, 0.05, 0.5, 0.05],
-        f_partners=dict(
-            c=dict(par1=[0.2, 0.1, 0.6, 0.02])
-        ),
+    """v3 calibration scaffold. See module docstring: requires a ``build_fn``
+    that rebuilds the network / genotype_pars from sampled values and an
+    ``eval_fn`` scoring age-stratified cancers against ``data``. Not executed in
+    this migration."""
+    raise NotImplementedError(
+        'v3 calibration must be ported to the ss.Calibration build_fn/eval_fn '
+        'API (see module docstring); not run per the migration mandate.'
     )
 
-    genotype_pars = make_priors()
 
-    # Save some extra sim results
-    extra_sim_result_keys = ['cancers', 'cancer_incidence', 'asr_cancer_incidence']
+def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True,
+               filestem=''):
+    """Load a pre-run calibration object.
 
-    calib = hpv.Calibration(sim, calib_pars=calib_pars, genotype_pars=genotype_pars,
-                            name=f'{location}_calib',
-                            datafiles=datafiles,
-                            extra_sim_result_keys=extra_sim_result_keys,
-                            total_trials=n_trials, n_workers=n_workers,
-                            storage=storage
-                            )
-    calib.calibrate()
-    filename = f'{location}_calib{filestem}'
-    if do_plot:
-        calib.plot(do_save=True, fig_path=f'figures/{filename}.png')
-    if do_save:
-        sc.saveobj(f'raw_results/{filename}.obj', calib)
-
-    print(f'Best pars are {calib.best_pars}')
-
-    return sim, calib
+    NOTE: the committed ``raw_results/<loc>_calib.obj`` are v2.x calibration
+    objects; their ``trial_pars_to_sim_pars`` / plotting API differs under v3's
+    ss.Calibration. Reuse of the already-extracted ``results/<loc>_pars.obj``
+    (a plain dict of calibrated parameters) is what run_sim/run_scenarios rely
+    on and is version-independent.
+    """
+    dfl = location.replace(' ', '_')
+    return sc.load(f'results/{dfl}_pars.obj')
 
 
-########################################################################
-# Load pre-run calibration
-########################################################################
-def load_calib(location=None, do_plot=True, which_pars=0, save_pars=True, save_mini=True, filestem=''):
-    fnlocation = location.replace(' ', '_')
-    filename = f'{fnlocation}_calib{filestem}'
-    calib = sc.load(f'raw_results/{filename}.obj')
-    if do_plot:
-        sc.fonts(add=sc.thisdir(aspath=True) / 'Libertinus Sans')
-        sc.options(font='Libertinus Sans')
-        fig = calib.plot(res_to_plot=200, plot_type='sns.boxplot', do_save=False)
-        fig.suptitle(f'Calibration results, {location.capitalize()}')
-        fig.tight_layout()
-        fig.savefig(f'figures/{filename}.png')
-
-    if save_pars:
-        calib_pars = calib.trial_pars_to_sim_pars(which_pars=which_pars)
-        trial_pars = sc.autolist()
-        for i in range(100):
-            trial_pars += calib.trial_pars_to_sim_pars(which_pars=i)
-        sc.save(f'results/{location}_pars{filestem}.obj', calib_pars)
-        sc.save(f'results/{location}_pars{filestem}_all.obj', trial_pars)
-
-
-    return calib
-
-
-# %% Run as a script
 if __name__ == '__main__':
-
     T = sc.timer()
-    filestem = ''
-
-    # Run calibration
     if 'run_calibration' in to_run:
-        for location in loc.locations:
-            sim, calib = run_calib(location=location, n_trials=n_trials, n_workers=n_workers,
-                                   do_save=do_save, do_plot=False, filestem=filestem)
-
-    # Load the calibration, plot it, and save the best parameters -- usually locally
-    if 'plot_calibration' in to_run:
-        for location in loc.locations:
-            calib = load_calib(location=location, do_plot=True, save_pars=True, filestem=filestem)
-
+        for location in locations:
+            run_calib(location=location, n_trials=n_trials, n_workers=n_workers)
+    if 'load_pars' in to_run:
+        for location in locations[:1]:
+            pars = load_calib(location=location)
+            print(location, 'calibrated beta =', pars.get('beta'))
     T.toc('Done')
