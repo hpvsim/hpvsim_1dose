@@ -22,11 +22,11 @@ import utils as ut
 import locations as loc
 
 DT = 0.25
-N_AGENTS = 20000
-MS = 10
+N_AGENTS = 10000
+MS = 3
 START = 1960
 END = 2125
-SEEDS = [0, 1, 2]
+SEEDS = [0, 1]
 SCENARIO_NAMES = ['No vaccination', 'Double dose',
                   'Single dose shipments', 'Single dose actual']
 
@@ -157,13 +157,14 @@ def run_location(location):
             cohort_cancers_high=float(np.quantile(sums, 0.9)),
         )
         print(f'  {location} / {sname}: cohort median={md[sname]["cohort_cancers"]:.0f}', flush=True)
-    sc.saveobj(f'results/{dfl}_vx_scens.obj', md)
+    os.makedirs('results/ref231', exist_ok=True)
+    sc.saveobj(f'results/ref231/{dfl}_vx_scens.obj', md)
     return md
 
 
 if __name__ == '__main__':
     T = sc.timer()
-    for location in ['bangladesh', 'nigeria']:
+    for location in ['bangladesh']:
         print(f'Running {location} ...', flush=True)
         run_location(location)
     print('Done.')

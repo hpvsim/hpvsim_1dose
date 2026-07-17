@@ -167,11 +167,11 @@ def compile_direct(locations, out='results_direct.csv'):
 # %% Run as a script (reduced-scale verification config)
 if __name__ == '__main__':
     T = sc.timer()
-    run_locations = ['bangladesh', 'nigeria']
-    seeds = [0, 1, 2]
+    run_locations = ['bangladesh']
+    seeds = [0, 1]
     end = 2125
-    ms = 10          # reduced-scale (v3 cancer is multiscale-invariant)
-    n_agents = 20000
+    ms = 3           # reduced-scale (v3 cancer is multiscale-invariant)
+    n_agents = 10000
     for location in run_locations:
         print(f'Running {location} ...', flush=True)
         run_location(location, end=end, seeds=seeds,
