@@ -1,162 +1,93 @@
 """
-Define custom analyzers
+Custom analyzers (migrated to HPVsim v3 / Starsim).
+
+The published analysis tracks cancers arising in the 2023/24 vaccination cohort
+(agents aged 9-16 in 2024) as that birth cohort ages. In v2 this was a custom
+``cohort_cancers`` analyzer that summed ``ppl.scale`` for agents whose
+``date_cancerous == sim.t`` inside a moving age band.
+
+In v3 the robust, engine-native way to get age-stratified *incident* cancers is
+``hpv.AgeResults`` (which correctly applies both the multiscale weight and the
+population scale, and — as of the M10 fix — accumulates incidence across all
+sub-steps of a calendar year rather than only the final dt tick). We therefore
+build an ``AgeResults`` analyzer with 1-year age bins at every year of the
+cohort window and extract the moving cohort band in post-processing.
 """
 
 import numpy as np
-import pandas as pd
 import sciris as sc
 import hpvsim as hpv
-import hpvsim.utils as hpu
+
+# Fine (1-year) age bins spanning the full lifespan.
+COHORT_EDGES = np.arange(0, 101, 1.0)
 
 
-class cohort_cancers(hpv.Analyzer):
-    def __init__(self, cohort_age=None, start=None, **kwargs):
-        super().__init__(**kwargs)
-        self.start = start or 2024
-        self.cohort_age = cohort_age or [9, 16]
-        self.years = None
-        self.results = None
-        return
-
-    def initialize(self, sim):
-        super().initialize()
-        self.si = sc.findfirst(sim.res_yearvec, self.start)
-        self.npts = len(sim.res_yearvec[self.si:])
-        self.years = sim.res_yearvec[self.si:]
-        self.results = np.zeros(self.npts)
-        return
-
-    def apply(self, sim):
-        if sim.yearvec[sim.t] >= self.start:
-            li = np.floor(sim.yearvec[sim.t])
-            idx = sc.findfirst(self.years, li)
-            ppl = sim.people
-
-            time_elapsed = sim.yearvec[sim.t] - self.start
-            current_age_range = [self.cohort_age[0]+time_elapsed, self.cohort_age[1]+time_elapsed]
-
-            cic = (ppl.date_cancerous == sim.t) & (ppl.age >= current_age_range[0]) & (ppl.age <= current_age_range[1])
-            if cic.any():
-                self.results[idx] += sum(ppl.scale[hpu.true(cic)])
-
-        return
-
-    @staticmethod
-    def reduce(analyzers, use_mean=False, quantiles=None):
-        # Process quantiles
-        if quantiles is None:
-            quantiles = {'low': 0.1, 'high': 0.9}
-        if not isinstance(quantiles, dict):
-            try:
-                quantiles = {'low':float(quantiles[0]), 'high':float(quantiles[1])}
-            except Exception as E:
-                errormsg = f'Could not figure out how to convert {quantiles} into a quantiles object: must be a dict with keys low, high or a 2-element array ({str(E)})'
-                raise ValueError(errormsg)
-
-        # Get base analyzer properties and copy them into reduced analyzer
-        base_analyzer = analyzers[0]
-        reduced_analyzer = sc.dcp(base_analyzer)
-        ashape = base_analyzer.results.shape  # Figure out dimensions
-        new_ashape = ashape + (len(analyzers),)
-        raw = np.zeros(new_ashape)
-
-        # Pull out results for each analyzer
-        for a, analyzer in enumerate(analyzers):
-            raw[:, a] = analyzer.results
-
-        # Get quantiles
-        reduced_analyzer.raw = raw
-        reduced_analyzer.results = np.quantile(raw, q=0.5, axis=-1)
-        reduced_analyzer.low  = np.quantile(raw, q=quantiles['low'], axis=-1)
-        reduced_analyzer.high = np.quantile(raw, q=quantiles['high'], axis=-1)
-
-        # Do sums
-        sums = raw.sum(axis=0)
-        reduced_analyzer.cum_cancers_best = np.quantile(sums, q=0.5)
-        reduced_analyzer.cum_cancers_low  = np.quantile(sums, q=quantiles['low'])
-        reduced_analyzer.cum_cancers_high = np.quantile(sums, q=quantiles['high'])
-
-        return reduced_analyzer
+def make_cohort_analyzer(years, edges=None):
+    """Return an ``hpv.AgeResults`` analyzer recording incident ``cancers`` by
+    1-year age bin at each requested calendar year."""
+    if edges is None:
+        edges = COHORT_EDGES
+    years = [float(y) for y in years]
+    return hpv.AgeResults(result_args=sc.objdict(
+        cancers=sc.objdict(years=years, edges=np.asarray(edges, dtype=float)),
+    ))
 
 
-class AFS(hpv.Analyzer):
-    def __init__(self, bins=None, cohort_starts=None, **kwargs):
-        super().__init__(**kwargs)
-        self.bins = bins or np.arange(12,31,1)
-        self.cohort_starts = cohort_starts
-        self.binspan = self.bins[-1]-self.bins[0]
+def extract_cohort(analyzer, start=2024, cohort_age=(9, 16), edges=None):
+    """Extract per-year cancers in the moving vaccination cohort.
 
-    def initialize(self, sim):
-        super().initialize()
-        if self.cohort_starts is None:
-            first_cohort = sim['start'] + sim['burnin'] - 5
-            last_cohort = sim['end']-self.binspan
-            self.cohort_starts = sc.inclusiverange(first_cohort, last_cohort)
-            self.cohort_ends = self.cohort_starts+self.binspan
-            self.n_cohorts = len(self.cohort_starts)
-            self.cohort_years = np.array([sc.inclusiverange(i,i+self.binspan) for i in self.cohort_starts])
+    The cohort is aged ``cohort_age`` (default 9-16) in ``start`` (2024) and
+    ages one year per calendar year, so in year ``y`` it occupies ages
+    ``[cohort_age[0] + (y-start), cohort_age[1] + (y-start)]``. Returns a
+    1-D array of scaled incident cancers per year, ordered by the analyzer's
+    configured years.
 
-        self.prop_active_f = np.zeros((self.n_cohorts,self.binspan+1))
-        self.prop_active_m = np.zeros((self.n_cohorts,self.binspan+1))
-
-    def apply(self, sim):
-        if sim.yearvec[sim.t] in self.cohort_years:
-            cohort_inds, bin_inds = sc.findinds(self.cohort_years, sim.yearvec[sim.t])
-            for ci,cohort_ind in enumerate(cohort_inds):
-                bin_ind = bin_inds[ci]
-                bin = self.bins[bin_ind]
-
-                conditions_f = sim.people.is_female * sim.people.alive * (sim.people.age >= (bin-1)) * (sim.people.age < bin) * sim.people.level0
-                denom_inds_f = hpu.true(conditions_f)
-                num_conditions_f = conditions_f * (sim.people.n_rships.sum(axis=0)>0)
-                num_inds_f = hpu.true(num_conditions_f)
-                self.prop_active_f[cohort_ind,bin_ind] = len(num_inds_f)/len(denom_inds_f)
-
-                conditions_m = ~sim.people.is_female * sim.people.alive * (sim.people.age >= (bin-1)) * (sim.people.age < bin)
-                denom_inds_m = hpu.true(conditions_m)
-                num_conditions_m = conditions_m * (sim.people.n_rships.sum(axis=0)>0)
-                num_inds_m = hpu.true(num_conditions_m)
-                self.prop_active_m[ci,bin_ind] = len(num_inds_m)/len(denom_inds_m)
-        return
+    ``analyzer`` must be the AgeResults instance held by the *run* sim
+    (``sim.analyzers['ageresults']``), because ``hpv.Sim`` deep-copies
+    analyzers at construction — the object passed in at build time is a
+    stale copy that never runs.
+    """
+    if edges is None:
+        edges = COHORT_EDGES
+    out = analyzer.outputs['cancers']
+    years = sorted(out.keys())
+    vals = []
+    for y in years:
+        el = y - start
+        lo = cohort_age[0] + el
+        hi = cohort_age[1] + el
+        arr = np.asarray(out[y])
+        binlo = max(0, int(np.floor(lo)))
+        binhi = min(len(arr), int(np.ceil(hi)))
+        vals.append(float(arr[binlo:binhi].sum()) if binlo < binhi else 0.0)
+    return np.array(vals)
 
 
-class prop_married(hpv.Analyzer):
-    def __init__(self, bins=None, years=None, includelast=True, yearstride=5, binspan=5, **kwargs):
-        super().__init__(**kwargs)
-        self.bins = bins or np.arange(15,50,binspan)
-        self.years = years
-        self.dfs = sc.autolist()
-        self.df = None
-        self.includelast = includelast
-        self.yearstride = yearstride
-        self.binspan = binspan
+def reduce_cohort(per_seed_arrays, quantiles=(0.1, 0.9)):
+    """Stack per-seed cohort arrays into ``raw`` (n_years, n_seeds) and compute
+    median/low/high cumulative trajectories (matching the v2 reduce output that
+    the CSV extractors expect)."""
+    raw = np.stack(per_seed_arrays, axis=-1)  # (n_years, n_seeds)
+    lo, hi = quantiles
+    med = np.cumsum(np.quantile(raw, 0.5, axis=-1))
+    low = np.cumsum(np.quantile(raw, lo, axis=-1))
+    high = np.cumsum(np.quantile(raw, hi, axis=-1))
+    sums = raw.sum(axis=0)  # per-seed lifetime cohort total
+    return sc.objdict(
+        raw=raw,
+        cum_med=med, cum_low=low, cum_high=high,
+        cum_cancers_best=float(np.quantile(sums, 0.5)),
+        cum_cancers_low=float(np.quantile(sums, lo)),
+        cum_cancers_high=float(np.quantile(sums, hi)),
+    )
 
-    def initialize(self, sim):
-        super().initialize()
-        if self.years is None:
-            start = sim['start'] + sim['burnin']
-            end = sim['end']
-            self.years = np.arange(start, end, self.yearstride)
-            if self.includelast:
-                if end not in self.years:
-                    self.years = np.append(self.years, end)
 
-    def apply(self, sim):
-        if sim.yearvec[sim.t] in self.years:
-
-            conditions = dict()
-            for ab in self.bins:
-                conditions[ab] = (sim.people.age >= ab) & (sim.people.age < ab+self.binspan) & sim.people.alive & sim.people.is_female & sim.people.level0
-
-            prop_married = sc.autolist()
-            for age_cond in conditions.values():
-                num_condition = age_cond & (sim.people.current_partners[0,:]>0)
-                prop_married += len(hpu.true(num_condition))/len(hpv.true(age_cond))
-
-            d = dict(age=self.bins, val=prop_married)
-            df = pd.DataFrame().from_dict(d)
-            df['year'] = sim.yearvec[sim.t]
-            self.dfs += df
-
-    def finalize(self, sim):
-        self.df = pd.concat(self.dfs)
+# ---------------------------------------------------------------------------
+# Behaviour-calibration analyzers (AFS, prop_married).
+#
+# These were used only for the DHS behaviour-fit diagnostics (read_sbdata.py),
+# not on the cancer/figure path. They rely on v2 People attributes
+# (``people.level0``, ``people.n_rships``, ``people.current_partners``,
+# ``hpv.true``) that changed in v3 and have NOT been ported. They are retained
+# here for reference; port to the v3 People/Network API before use.
+# ---------------------------------------------------------------------------

@@ -1,9 +1,19 @@
 """
-Run scenarios with varying numbers of doses
+Run single-dose vaccination scenarios (migrated to HPVsim v3).
+
+v3 intervention changes:
+* ``hpv.default_vx(prod_name=...)`` is gone; build the product with
+  ``hpv.vx(name='nonavalent'|'bivalent', sterilizing_p=...)``. The v2
+  ``imm_init`` (sterilizing probability) is now ``sterilizing_p``.
+* ``hpv.campaign_vx(prob=, years=, product=, sex=, age_range=, name=)``.
+  ``annual_prob`` is gone (a campaign applies ``prob`` once at its year).
+  ``sex=0`` = females. Downstream interventions read upstream outcomes via
+  ``sim.interventions['<name>'].outcomes[...]`` (``sim.get_intervention`` gone).
+* No ``hpv.MultiSim``; sims are run directly per seed.
+
+Cohort cancers are read from each sim's ``AgeResults`` analyzer (see
+analyzers.py) and reduced across seeds.
 """
-
-
-# %% General settings
 
 import os
 
@@ -14,86 +24,60 @@ os.environ.update(
     MKL_NUM_THREADS='1',
 )
 
-# Standard imports
 import numpy as np
 import sciris as sc
+import starsim as ss
 import hpvsim as hpv
 import pandas as pd
 
-# Imports from this repository
 import run_sim as rs
+import analyzers as an
 import locations as loc
 
-# Settings - used here and imported elsewhere
+# Settings
 debug = 0
-n_seeds = [20, 1][debug]  # How many seeds to run per cluster
+n_seeds = [20, 1][debug]
 serial = False
-if serial: n_seeds = 1
 
-# %% Create interventions
+SCENARIO_NAMES = ['No vaccination', 'Double dose',
+                  'Single dose shipments', 'Single dose actual']
 
 
+# %% Interventions
 def make_st(screen_coverage=0.15, treat_coverage=0.7, start_year=2020):
-    """ Make screening & treatment intervention """
-
+    """Screen-and-treat cascade (v3). Not used by the dose scenarios below;
+    migrated for completeness. Uses ``sim.interventions['<name>']`` wiring."""
     age_range = [30, 50]
-    len_age_range = (age_range[1]-age_range[0])/2
-    model_annual_screen_prob = 1 - (1 - screen_coverage)**(1/len_age_range)
+    len_age_range = (age_range[1] - age_range[0]) / 2
+    model_annual_screen_prob = 1 - (1 - screen_coverage) ** (1 / len_age_range)
 
-    screen_eligible = lambda sim: np.isnan(sim.people.date_screened) | \
-                                  (sim.t > (sim.people.date_screened + 5 / sim['dt']))
     screening = hpv.routine_screening(
-        prob=model_annual_screen_prob,
-        eligibility=screen_eligible,
-        start_year=start_year,
-        product='hpv',
-        age_range=age_range,
-        label='screening'
-    )
+        prob=model_annual_screen_prob, start_year=start_year,
+        product='hpv', age_range=age_range, name='screening')
 
-    # Assign treatment
-    screen_positive = lambda sim: sim.get_intervention('screening').outcomes['positive']
+    screen_positive = lambda sim: sim.interventions['screening'].outcomes['positive']
     assign_treatment = hpv.routine_triage(
-        start_year=start_year,
-        prob=1.0,
-        annual_prob=False,
-        product='tx_assigner',
-        eligibility=screen_positive,
-        label='tx assigner'
-    )
+        start_year=start_year, prob=1.0, product='tx_assigner',
+        eligibility=screen_positive, name='tx_assigner')
 
-    ablation_eligible = lambda sim: sim.get_intervention('tx assigner').outcomes['ablation']
-    ablation = hpv.treat_num(
-        prob=treat_coverage,
-        product='ablation',
-        eligibility=ablation_eligible,
-        label='ablation'
-    )
+    ablation_eligible = lambda sim: sim.interventions['tx_assigner'].outcomes['ablation']
+    ablation = hpv.treat_num(prob=treat_coverage, product='ablation',
+                             eligibility=ablation_eligible, name='ablation')
 
-    excision_eligible = lambda sim: list(set(sim.get_intervention('tx assigner').outcomes['excision'].tolist() +
-                                             sim.get_intervention('ablation').outcomes['unsuccessful'].tolist()))
-    excision = hpv.treat_num(
-        prob=treat_coverage,
-        product='excision',
-        eligibility=excision_eligible,
-        label='excision'
-    )
+    excision_eligible = lambda sim: list(set(
+        sim.interventions['tx_assigner'].outcomes['excision'].tolist() +
+        sim.interventions['ablation'].outcomes['unsuccessful'].tolist()))
+    excision = hpv.treat_num(prob=treat_coverage, product='excision',
+                             eligibility=excision_eligible, name='excision')
 
-    radiation_eligible = lambda sim: sim.get_intervention('tx assigner').outcomes['radiation']
-    radiation = hpv.treat_num(
-        prob=treat_coverage/4,  # assume an additional dropoff in CaTx coverage
-        product=hpv.radiation(),
-        eligibility=radiation_eligible,
-        label='radiation'
-    )
+    radiation_eligible = lambda sim: sim.interventions['tx_assigner'].outcomes['radiation']
+    radiation = hpv.treat_num(prob=treat_coverage / 4, product=hpv.radiation(),
+                              eligibility=radiation_eligible, name='radiation')
 
-    st_intvs = [screening, assign_treatment, ablation, excision, radiation]
-
-    return st_intvs
+    return [screening, assign_treatment, ablation, excision, radiation]
 
 
 def make_vx_scenarios(location=None, year=2024):
-
     if location in ['ethiopia', 'laos', 'zambia']:
         routine_age = (9, 17)
     elif location in ['togo']:
@@ -103,174 +87,95 @@ def make_vx_scenarios(location=None, year=2024):
     else:
         routine_age = (9, 15)
 
-    vx_scenarios = dict()
+    prod_name = 'bivalent' if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe'] else 'nonavalent'
 
-    # Baseline
-    vx_scenarios['No vaccination'] = []
+    def single_dose():
+        # v2 imm_init dict(uniform, 0.98, 0.99) -> mean sterilizing_p.
+        return hpv.vx(name=prod_name, sterilizing_p=0.985)
 
-    # Single dose
-    if location in ['bangladesh', 'cambodia', 'togo', 'zimbabwe']:
-        # For these countries, we use the single dose product
-        product = 'bivalent'
-    else:
-        product = 'nonavalent'
-    singledose = hpv.default_vx(prod_name=product)
-    singledose.imm_init = dict(dist='uniform', par1=0.98, par2=0.99)
-    eligibility = lambda sim: (sim.people.doses == 0)
+    shipped_cov = loc.vx_coverage_shipped[location]
+    actual_cov = loc.vx_coverage_actual[location]
+    cf_cov = loc.vx_coverage_cf[location]
 
-    # Coverage levels
-    shipped_coverage = loc.vx_coverage_shipped[location]
-    actual_coverage = loc.vx_coverage_actual[location]
-    cf_coverage = loc.vx_coverage_cf[location]
-
-    # Interventions
-    shipped = hpv.campaign_vx(
-        prob=shipped_coverage,
-        years=year,
-        product=singledose,
-        sex=0,
-        age_range=routine_age,
-        eligibility=eligibility,
-        interpolate=False,
-        annual_prob=False,
-        label='Single dose shipments'
-    )
-
-    actual = hpv.campaign_vx(
-        prob=actual_coverage,
-        years=year,
-        product=singledose,
-        sex=0,
-        age_range=routine_age,
-        eligibility=eligibility,
-        interpolate=False,
-        annual_prob=False,
-        label='Single dose actual'
-    )
-
-    cf = hpv.campaign_vx(
-        prob=cf_coverage,
-        years=year,
-        product=singledose,
-        sex=0,
-        age_range=routine_age,
-        eligibility=eligibility,
-        interpolate=False,
-        annual_prob=False,
-        label='Double dose'
-    )
-
-    vx_scenarios['Single dose shipments'] = [shipped]
-    vx_scenarios['Single dose actual'] = [actual]
-    vx_scenarios['Double dose'] = [cf]
-
-    return vx_scenarios
+    scenarios = dict()
+    scenarios['No vaccination'] = []
+    scenarios['Single dose shipments'] = [hpv.campaign_vx(
+        prob=shipped_cov, years=year, product=single_dose(), sex=0,
+        age_range=routine_age, name='vx')]
+    scenarios['Single dose actual'] = [hpv.campaign_vx(
+        prob=actual_cov, years=year, product=single_dose(), sex=0,
+        age_range=routine_age, name='vx')]
+    scenarios['Double dose'] = [hpv.campaign_vx(
+        prob=cf_cov, years=year, product=single_dose(), sex=0,
+        age_range=routine_age, name='vx')]
+    return scenarios
 
 
-def make_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100):
-    """ Set up scenarios """
-
-    # st_intv = make_st()
-
-    all_msims = sc.autolist()
-    for name, vx_intv in vx_scenarios.items():
-        sims = sc.autolist()
-        for seed in range(n_seeds):
-            interventions = vx_intv #+ st_intv
-            sim = rs.make_sim(location=location, calib_pars=calib_pars, debug=debug, interventions=interventions, end=end, seed=seed)
-            sim.label = name
-            sims += sim
-        all_msims += hpv.MultiSim(sims)
-
-    msim = hpv.MultiSim.merge(all_msims, base=False)
-
-    return msim
+# %% Build + run
+def run_scenario_seeds(location, calib_pars, scenario_name, end, seeds,
+                       ms_agent_ratio=100, n_agents=None):
+    """Run one scenario across seeds; return per-seed cohort arrays."""
+    per_seed = []
+    for seed in seeds:
+        # Rebuild interventions per seed (sims deep-copy/consume them).
+        intvs = make_vx_scenarios(location)[scenario_name]
+        sim = rs.make_sim(location=location, calib_pars=calib_pars, debug=debug,
+                          interventions=intvs, end=end, seed=seed,
+                          ms_agent_ratio=ms_agent_ratio, n_agents=n_agents)
+        sim.run()
+        az = sim.analyzers['ageresults']
+        per_seed.append(an.extract_cohort(az))
+    return per_seed
 
 
-def run_sims(location=None, calib_pars=None, vx_scenarios=None, end=2100, verbose=0.2):
-    """ Run the simulations """
-    msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
-    msim.run(verbose=verbose)
-    return msim
+def run_location(location, end=2125, seeds=None, ms_agent_ratio=100, n_agents=None):
+    if seeds is None:
+        seeds = list(range(n_seeds))
+    dfl = location.replace(' ', '_')
+    calib_pars = sc.loadobj(f'results/{dfl}_pars.obj')
+    calib_pars.pop('hiv_pars', None)
+
+    msim_dict = sc.objdict()
+    for sname in SCENARIO_NAMES:
+        per_seed = run_scenario_seeds(location, calib_pars, sname, end, seeds,
+                                      ms_agent_ratio=ms_agent_ratio, n_agents=n_agents)
+        red = an.reduce_cohort(per_seed)
+        msim_dict[sname] = sc.objdict(
+            raw_cohort_cancers=red.raw,
+            cohort_cancers=red.cum_cancers_best,
+            cohort_cancers_low=red.cum_cancers_low,
+            cohort_cancers_high=red.cum_cancers_high,
+        )
+    sc.saveobj(f'results/{dfl}_vx_scens.obj', msim_dict)
+    return msim_dict
 
 
-# %% Run as a script
+def compile_direct(locations, out='results_direct.csv'):
+    dfs = []
+    for location in locations:
+        dfl = location.replace(' ', '_')
+        md = sc.loadobj(f'results/{dfl}_vx_scens.obj')
+        dd = dict(location=location)
+        for scen in md.keys():
+            dd[scen] = md[scen]['cohort_cancers']
+            dd[scen + ' - lb'] = md[scen]['cohort_cancers_low']
+            dd[scen + ' - ub'] = md[scen]['cohort_cancers_high']
+        dfs.append(pd.DataFrame(dd, index=[0]))
+    pd.concat(dfs).to_csv(out)
+
+
+# %% Run as a script (reduced-scale verification config)
 if __name__ == '__main__':
-
     T = sc.timer()
-    do_run = False
-    do_process = False
-    do_compile = True
+    run_locations = ['bangladesh', 'nigeria']
+    seeds = [0, 1, 2]
     end = 2125
-
-    # Run scenarios (usually on VMs, runs n_seeds in parallel over M scenarios)
-    if do_run:
-
-        for location in loc.locations:
-            fnlocation = location.replace(' ', '_')
-            calib_pars = sc.loadobj(f'results/{fnlocation}_pars.obj')
-            if 'hiv_pars' in calib_pars:
-                # Remove hiv_pars if it exists, as we are not running HIV simulations here
-                calib_pars.pop('hiv_pars', None)
-            vx_scenarios = make_vx_scenarios(location=location, year=2024)
-
-            if serial:
-                msim = make_sims(location=location, calib_pars=calib_pars, vx_scenarios=vx_scenarios, end=end)
-                for sim in msim.sims:
-                    sim.run(verbose=0.1)
-            else:
-                msim = run_sims(calib_pars=calib_pars, location=location, vx_scenarios=vx_scenarios, end=end)
-
-            if do_process:
-
-                metrics = ['year', 'asr_cancer_incidence', 'n_vaccinated', 'n_precin_by_age', 'n_females_alive_by_age', 'cancers', 'cancer_deaths']
-
-                # Process results
-                scen_labels = list(vx_scenarios.keys())
-                mlist = msim.split(chunks=len(scen_labels))
-
-                msim_dict = sc.objdict()
-                for si, scen_label in enumerate(scen_labels):
-
-                    # Deal with analyzer
-                    msim = mlist[si]
-                    base_analyzer = msim.sims[0].get_analyzer('cohort_cancers')
-                    alist = [sim.get_analyzer('cohort_cancers') for sim in msim.sims]
-                    reduced_analyzer = base_analyzer.reduce(alist)
-
-                    reduced_sim = mlist[si].reduce(output=True)
-                    mres = sc.objdict({metric: reduced_sim.results[metric] for metric in metrics})
-
-                    mres['cohort_cancers'] = reduced_analyzer.cum_cancers_best
-                    mres['cohort_cancers_low'] = reduced_analyzer.cum_cancers_low
-                    mres['cohort_cancers_high'] = reduced_analyzer.cum_cancers_high
-                    mres['raw_cohort_cancers'] = reduced_analyzer.raw
-                    msim_dict[scen_label] = mres
-
-                sc.saveobj(f'results/{fnlocation}_vx_scens.obj', msim_dict)
-
-    which = 'direct'
-    if do_compile:
-
-        dfs = []
-        for location in loc.locations:
-            dd = dict()
-            fnlocation = location.replace(' ', '_')
-            msim_dict = sc.loadobj(f'results/{fnlocation}_vx_scens.obj')
-
-            dd['location'] = location
-            for scen in msim_dict.keys():
-                if which == 'direct':
-                    dd[scen] = msim_dict[scen]['cohort_cancers']
-                    dd[scen+' - lb'] = msim_dict[scen]['cohort_cancers_low']
-                    dd[scen+' - ub'] = msim_dict[scen]['cohort_cancers_high']
-                elif which == 'indirect':
-                    dd[scen] = msim_dict[scen]['cancers'].values[65:].sum()
-                    dd[scen+' - lb'] = msim_dict[scen]['cancers'].low[65:].sum()
-                    dd[scen+' - ub'] = msim_dict[scen]['cancers'].high[65:].sum()
-
-            dfs += [pd.DataFrame(dd, index=[0])]
-        ddf = pd.concat(dfs)
-        ddf.to_csv(f'results_{which}.csv')
-
+    ms = 10          # reduced-scale (v3 cancer is multiscale-invariant)
+    n_agents = 20000
+    for location in run_locations:
+        print(f'Running {location} ...', flush=True)
+        run_location(location, end=end, seeds=seeds,
+                     ms_agent_ratio=ms, n_agents=n_agents)
+    compile_direct(run_locations)
     print('Done.')
+    T.toc()
