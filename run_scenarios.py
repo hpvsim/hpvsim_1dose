@@ -101,13 +101,13 @@ def make_vx_scenarios(location=None, year=2024):
     scenarios['No vaccination'] = []
     scenarios['Single dose shipments'] = [hpv.campaign_vx(
         prob=shipped_cov, years=year, product=single_dose(), sex=0,
-        age_range=routine_age, name='vx')]
+        age_range=routine_age, name='vax_campaign')]
     scenarios['Single dose actual'] = [hpv.campaign_vx(
         prob=actual_cov, years=year, product=single_dose(), sex=0,
-        age_range=routine_age, name='vx')]
+        age_range=routine_age, name='vax_campaign')]
     scenarios['Double dose'] = [hpv.campaign_vx(
         prob=cf_cov, years=year, product=single_dose(), sex=0,
-        age_range=routine_age, name='vx')]
+        age_range=routine_age, name='vax_campaign')]
     return scenarios
 
 
