@@ -93,6 +93,25 @@ def _fix_debut(debut):
     return out
 
 
+# Per-country casual-concurrency (f_cross_layer) recalibration for v3.
+#
+# The v2.2.6 calibration these baselines came from ran with a dt-dependent bug
+# (partnership formation applied per-timestep as-is → ~4x inflation at dt=0.25).
+# hpvsim v2.3 fixed that (commit 2091467f, "scale partnership rates", issue #13),
+# which is correct but INVALIDATED the v2.2.6 network calibration: on v3 the
+# marital-dominated / low-casual networks fall below R_eff=1 and HPV goes extinct.
+# Per-act beta is not an effective lever (transmission can't rescue a too-sparse
+# network); the effective knob is female casual concurrency (f_cross_layer), which
+# controls how many of the ~90%-married women also form casual partnerships.
+# Each country's f_cross_layer is re-fit so v3 reproduces its v2.2.6 endemic HPV
+# prevalence. bangladesh is fitted+verified (0.64 → ~6% endemic, matching v2.2.6's
+# 0.089→0.062 trajectory). Other countries fall back to the v3 default until fit
+# (they will under-transmit — see tools/fit_casual_cross.py for the 1-param sweep).
+CASUAL_CROSS_RECAL = {
+    'bangladesh': 0.64,  # fitted 2026-07-20 to v2.2.6 endemic ~6%
+}
+
+
 def build_network(location, dt=0.25):
     """Build a v3 ``hpv.SexualNetwork`` from this project's per-country
     behaviour parameters (layer_probs, mixing, partners, debut)."""
@@ -106,6 +125,9 @@ def build_network(location, dt=0.25):
         f_partners=dp.f_partners,
         debut=_fix_debut(ut.make_sb_data(location=location)),
     )
+    # Apply the per-country casual-concurrency recalibration (see note above).
+    if location in CASUAL_CROSS_RECAL:
+        overrides['f_cross_layer'] = CASUAL_CROSS_RECAL[location]
     return hpv.SexualNetwork(**C._network_pars(location, overrides=overrides))
 
 
