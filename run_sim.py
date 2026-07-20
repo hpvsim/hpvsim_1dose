@@ -107,8 +107,29 @@ def _fix_debut(debut):
 # prevalence. bangladesh is fitted+verified (0.64 → ~6% endemic, matching v2.2.6's
 # 0.089→0.062 trajectory). Other countries fall back to the v3 default until fit
 # (they will under-transmit — see tools/fit_casual_cross.py for the 1-param sweep).
+# Fitted 2026-07-20: per-country f_cross_layer chosen so v3 reproduces each
+# country's v2.2.6 endemic HPV prevalence (n_infected/n_alive, 2010-2019 mean).
+# Method: v2.2.6 target per country, then interpolate v3 f_cross over a sweep.
+# Notes: 'cambodia' meets target at the v3 default (no boost); 'tanzania' is
+# capped at 0.95 and still slightly undershoots (its network barely responds).
 CASUAL_CROSS_RECAL = {
-    'bangladesh': 0.64,  # fitted 2026-07-20 to v2.2.6 endemic ~6%
+    'bangladesh': 0.64,
+    'burkina faso': 0.22,
+    'cambodia': 0.185,
+    'cameroon': 0.126,
+    'cote divoire': 0.473,
+    'ethiopia': 0.359,
+    'gambia': 0.308,
+    'laos': 0.145,
+    'mali': 0.248,
+    'mozambique': 0.208,
+    'myanmar': 0.433,
+    'nepal': 0.227,
+    'nigeria': 0.237,
+    'sierra leone': 0.107,
+    'tanzania': 0.95,
+    'togo': 0.286,
+    'zambia': 0.313,
 }
 
 
