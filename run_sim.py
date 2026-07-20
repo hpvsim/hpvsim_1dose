@@ -103,15 +103,14 @@ def _fix_debut(debut):
 # Per-act beta is not an effective lever (transmission can't rescue a too-sparse
 # network); the effective knob is female casual concurrency (f_cross_layer), which
 # controls how many of the ~90%-married women also form casual partnerships.
-# Each country's f_cross_layer is re-fit so v3 reproduces its v2.2.6 endemic HPV
-# prevalence. bangladesh is fitted+verified (0.64 → ~6% endemic, matching v2.2.6's
-# 0.089→0.062 trajectory). Other countries fall back to the v3 default until fit
-# (they will under-transmit — see tools/fit_casual_cross.py for the 1-param sweep).
-# Fitted 2026-07-20: per-country f_cross_layer chosen so v3 reproduces each
-# country's v2.2.6 endemic HPV prevalence (n_infected/n_alive, 2010-2019 mean).
-# Method: v2.2.6 target per country, then interpolate v3 f_cross over a sweep.
-# Notes: 'cambodia' meets target at the v3 default (no boost); 'tanzania' is
-# capped at 0.95 and still slightly undershoots (its network barely responds).
+# Fitted 2026-07-20: each country's f_cross_layer chosen so v3 reproduces its
+# v2.2.6 endemic HPV prevalence (n_infected/n_alive, 2010-2019 mean), via a
+# per-country f_cross sweep interpolated to the target. bangladesh verified
+# against the full v2.2.6 trajectory (0.089→0.062). 'cambodia' meets target at
+# the v3 default (no boost). 'tanzania' does NOT respond to concurrency — its
+# calibrated casual layer_probs peak at old ages (45-65) and are sparse at prime
+# ages (15-40), so extra concurrency only adds old-age casual that doesn't
+# transmit HPV; it uses CASUAL_PRIME_RECAL (below) instead.
 CASUAL_CROSS_RECAL = {
     'bangladesh': 0.64,
     'burkina faso': 0.22,
@@ -127,18 +126,33 @@ CASUAL_CROSS_RECAL = {
     'nepal': 0.227,
     'nigeria': 0.237,
     'sierra leone': 0.107,
-    'tanzania': 0.95,
+    'tanzania': 0.185,  # concurrency ineffective (age-misplaced casual); see CASUAL_PRIME_RECAL
     'togo': 0.286,
     'zambia': 0.313,
 }
+
+# Prime-age (15-40) casual-participation recalibration. For countries whose
+# calibrated casual layer_probs are concentrated at non-transmitting old ages,
+# raising concurrency (f_cross_layer) can't restore HPV — instead raise casual
+# participation at prime ages directly. Value replaces layer_probs['c'] at the
+# 15-40 age bins (raw, pre-annualization); fitted to the v2.2.6 endemic.
+CASUAL_PRIME_RECAL = {
+    'tanzania': 0.37,  # fitted 2026-07-20 -> endemic ~0.164 (v2.2.6 target)
+}
+# make_layer_probs age bins are [0,5,...,75]; indices 3:9 == ages 15-40.
+_PRIME_CASUAL_BINS = slice(3, 9)
 
 
 def build_network(location, dt=0.25):
     """Build a v3 ``hpv.SexualNetwork`` from this project's per-country
     behaviour parameters (layer_probs, mixing, partners, debut)."""
-    layer_probs = _layer_probs_to_annual(
-        dp.make_layer_probs(location=location), dt
-    )
+    raw_layer_probs = dp.make_layer_probs(location=location)
+    # Prime-age casual recalibration (see CASUAL_PRIME_RECAL): raise casual
+    # participation at ages 15-40 before the annual conversion.
+    if location in CASUAL_PRIME_RECAL:
+        for row in (1, 2):  # 1 = female, 2 = male participation
+            raw_layer_probs['c'][row, _PRIME_CASUAL_BINS] = CASUAL_PRIME_RECAL[location]
+    layer_probs = _layer_probs_to_annual(raw_layer_probs, dt)
     overrides = dict(
         layer_probs=layer_probs,
         mixing=dp.mixing[location],
